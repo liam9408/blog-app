@@ -2,6 +2,7 @@ import { injectable, inject } from 'inversify';
 import { Transaction } from 'sequelize';
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { omit } from 'lodash';
 
 import ServerConfig from '../configs/server.config';
 import { SERVICE_IDENTIFIER } from '../constants';
@@ -10,8 +11,7 @@ import UserModel from '../db/models/user.model';
 import HttpException from '../exceptions/HttpException';
 import logger from '../utils/logger';
 import { User } from '../types/user.type';
-import { RegistrationData } from '../types/auth.type';
-import { TokenData, DataStoredInToken } from '../types/auth.type';
+import { RegistrationData, TokenData } from '../types/auth.type';
 
 @injectable()
 class AuthService {
@@ -25,6 +25,26 @@ class AuthService {
     this.serverConfig = serverConfig;
   }
 
+  private async createToken(userId: number): Promise<TokenData> {
+    const { jwtSecret } = this.serverConfig;
+    const expiresIn: number = 60 * 20;
+    const token = jwt.sign({ userId }, jwtSecret, { expiresIn });
+
+    if (!token) {
+      logger.error({
+        level: 'error',
+        label: 'Auth Service',
+        message: 'Unable to create security token',
+      });
+      throw new HttpException(500, 30006, 'Unable to create security token');
+    }
+
+    return {
+      expiresIn,
+      token,
+    };
+  }
+
   public async register(
     registrationData: RegistrationData,
     transaction?: Transaction
@@ -32,23 +52,27 @@ class AuthService {
     try {
       const newUser = await this.userModel.create(
         { ...registrationData },
-        { transaction }
+        {
+          transaction,
+        }
       );
 
-      delete newUser.password;
-
-      const tokenData = this.createJwtToken({ userId: newUser.id });
+      const tokenData = await this.createToken(newUser.id);
       const cookie = AuthService.createCookie(tokenData);
+
+      const user = omit(newUser.toJSON(), 'password');
+
       return {
         cookie,
-        user: newUser.toJSON(),
+        user,
       };
-    } catch (err) {
-      logger.log({
+    } catch (error) {
+      logger.error({
         level: 'error',
         label: 'Auth Service - register',
-        message: err.stack,
+        message: error.stack,
       });
+
       throw new HttpException(500, 30001, 'Unable to register user');
     }
   }
@@ -59,37 +83,43 @@ class AuthService {
   ): Promise<{ cookie: string; user: User }> {
     try {
       const existingUser = await this.userModel.findOne({
-        where: {
-          email,
-        },
+        where: { email },
       });
-      if (existingUser) {
-        throw new HttpException(500, 30001, 'No user found');
+
+      if (!existingUser) {
+        throw new HttpException(
+          500,
+          30001,
+          `No user found with email ${email}`
+        );
       }
 
       const isPasswordMatching: boolean = await bcrypt.compare(
         password,
         existingUser.password
       );
+
       if (!isPasswordMatching) {
         throw new HttpException(409, 30001, 'Invalid credentials.');
       }
 
-      delete existingUser.password;
-
-      const tokenData = this.createJwtToken({ userId: existingUser.id });
+      const tokenData = await this.createToken(existingUser.id);
       const cookie = AuthService.createCookie(tokenData);
+
+      const user = omit(existingUser.toJSON(), 'password');
+
       return {
         cookie,
-        user: existingUser.toJSON(),
+        user,
       };
-    } catch (err) {
-      logger.log({
+    } catch (error) {
+      logger.error({
         level: 'error',
         label: 'Auth Service - authorize',
-        message: err.stack,
+        message: error.stack,
       });
-      throw new HttpException(500, 30001, 'Unable to register user');
+
+      throw new HttpException(500, 30001, 'Unable to authorize user');
     }
   }
 
@@ -99,59 +129,44 @@ class AuthService {
     try {
       const existingUser = await this.userModel.findByPk(userId);
 
-      if (existingUser) {
+      if (!existingUser) {
         throw new HttpException(500, 30001, 'No user found');
       }
 
-      delete existingUser.password;
-
-      const tokenData = this.createJwtToken({ userId: existingUser.id });
+      const tokenData = await this.createToken(userId);
       const cookie = AuthService.createCookie(tokenData);
+
+      const user = omit(existingUser.toJSON(), 'password');
+
       return {
         cookie,
-        user: existingUser.toJSON(),
+        user,
       };
-    } catch (err) {
-      logger.log({
+    } catch (error) {
+      logger.error({
         level: 'error',
-        label: 'Auth Service - authorize',
-        message: err.stack,
+        label: 'Auth Service - reAuthorize',
+        message: error.stack,
       });
-      throw new HttpException(500, 30001, 'Unable to register user');
+
+      throw new HttpException(500, 30001, 'Unable to reauthorize user');
     }
   }
 
   public async signOut(data: User, transaction: Transaction): Promise<User> {
     try {
       const newUser = await this.userModel.create({ ...data }, { transaction });
-      return newUser.toJSON();
-    } catch (err) {
-      logger.log({
-        level: 'error',
-        label: 'Auth Service',
-        message: err.stack,
-      });
-      throw new HttpException(500, 30001, 'Unable to register user');
-    }
-  }
 
-  public createJwtToken(DataStoredInToken: DataStoredInToken): TokenData {
-    // eslint-disable-next-line camelcase
-    const { jwtSecret } = this.serverConfig;
-    const expiresIn: number = 60 * 20;
-    const token = jwt.sign(DataStoredInToken, jwtSecret, { expiresIn });
-    if (!token) {
-      logger.log({
+      return omit(newUser.toJSON(), 'password');
+    } catch (error) {
+      logger.error({
         level: 'error',
-        label: 'Auth Service',
-        message: 'Unable to create security token',
+        label: 'Auth Service - signOut',
+        message: error.stack,
       });
-      throw new HttpException(500, 30006, 'Unable to create security token');
+
+      throw new HttpException(500, 30001, 'Unable to sign out user');
     }
-    return {
-      expiresIn,
-      token,
-    };
   }
 
   public static createCookie(tokenData: TokenData): string {

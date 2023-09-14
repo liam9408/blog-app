@@ -5,7 +5,6 @@ import {
   MaxLength,
   Matches,
   IsNotEmpty,
-  IsOptional,
 } from 'class-validator';
 import { DTO_VALIDATOR } from '../../constants';
 

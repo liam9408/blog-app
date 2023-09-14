@@ -20,7 +20,6 @@ class DefaultRoute implements Route {
     this.router.post(
       `${this.path}/register`,
       validationMiddleware(RegisterDto),
-      authMiddleware,
       this.authController.register
     );
 

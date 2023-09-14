@@ -1,6 +1,6 @@
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
-import Posts from './post.model';
+import Post from './post.model';
 
 class User extends Model {
   public id!: number;
@@ -59,7 +59,7 @@ class User extends Model {
   }
 
   public static initAssociation(): void {
-    this.hasMany(Posts);
+    this.hasMany(Post);
   }
 }
 

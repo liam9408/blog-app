@@ -54,12 +54,9 @@ class AuthController {
   ) => {
     try {
       const { email, password } = req.body;
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-
       const { cookie, user } = await this.authService.authorize(
         email,
-        hashedPassword
+        password
       );
 
       res.setHeader('Set-Cookie', [cookie]);
