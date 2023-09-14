@@ -22,6 +22,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      status: {
+        type: Sequelize.ENUM,
+        values: ['draft', 'published'],
+      },
       categoryId: {
         type: Sequelize.INTEGER,
         allowNull: false,

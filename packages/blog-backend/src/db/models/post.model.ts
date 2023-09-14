@@ -1,7 +1,7 @@
 import { Sequelize, Model, DataTypes } from 'sequelize';
 import { values as getValues } from 'lodash';
 
-import enums from '../../../shared/enums';
+import enums from '../../enums';
 import User from './user.model';
 import Category from './category.model';
 
