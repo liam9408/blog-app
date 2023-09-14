@@ -2,6 +2,8 @@ import './environment';
 
 import App from './app';
 
-const app = new App([]);
+import { DefaultRoute } from './routes';
+
+const app = new App([new DefaultRoute()]);
 
 app.listen();
