@@ -1,9 +1,9 @@
-module.exports = withTM({
+module.exports = {
   reactStrictMode: true,
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ["@svgr/webpack"],
+      use: ['@svgr/webpack'],
     });
     return config;
   },
@@ -13,7 +13,7 @@ module.exports = withTM({
   publicRuntimeConfig: {
     API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
-});
+};
 
 /**
  * Bundle Analyzer
