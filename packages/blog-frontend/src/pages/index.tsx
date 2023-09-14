@@ -4,17 +4,12 @@ import Head from 'next/head';
 import NextLink from 'next/link';
 
 import { Box, Card, Container, Divider, Link, Typography } from '@mui/material';
-import { GuestGuard } from '../components/organisms/guest-guard';
+import { GuestGuard } from '../components/organisms/GuestGuard';
 
-import { LoginForm } from '../components/organisms/login-form';
-// import { Logo } from '../components/logo';
-// import { useAuth } from '../hooks/use-auth';
-// import { useMounted } from '../hooks/use-mounted';
-// import { authApi } from '../api/auth-api';
+import { LoginForm } from '../components/organisms/LoginForm';
+import { Logo } from '../components/atoms/Logo';
 
 const Login: NextPage = () => {
-  // const isMounted = useMounted();
-
   return (
     <>
       <Head>
@@ -48,14 +43,14 @@ const Login: NextPage = () => {
               }}
             >
               <NextLink href="/" passHref>
-                {/* <a>
+                <a>
                   <Logo
                     sx={{
                       height: 40,
                       width: 40,
                     }}
                   />
-                </a> */}
+                </a>
               </NextLink>
               <Typography variant="h5">Log In</Typography>
               <Typography color="textSecondary" sx={{ mt: 2 }} variant="body2">

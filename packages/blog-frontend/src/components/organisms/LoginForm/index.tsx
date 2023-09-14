@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { FC } from 'react';
-// import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,22 +17,18 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useAuth } from '../../../hooks/use-auth';
-// import { useMounted } from '../../../hooks/use-mounted';
 import { SignInData } from '../../../types/auth.type';
 
 export const LoginForm: FC = () => {
-  //   const isMounted = useMounted();
-  //   const router = useRouter();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const initialValues = {
+  const initialValues: SignInData = {
     email: '',
     password: '',
-    submit: null,
   };
 
   const validationSchema = Yup.object({
@@ -44,34 +39,19 @@ export const LoginForm: FC = () => {
     password: Yup.string().max(255).required('Password is required'),
   });
 
-  const validation = useForm({
+  const form = useForm<SignInData>({
     defaultValues: initialValues,
-    resolver: yupResolver(validationSchema),
   });
+
+  const { register, handleSubmit, formState } = form;
+
+  const { errors } = formState;
 
   const onSubmit = async (values: SignInData): Promise<void> => {
     setLoading(true);
-    const resp = await login(values.email, values.password);
-    if (resp.success) {
-    } else {
-      setError('error');
-    }
+    await login(values.email, values.password);
     setLoading(false);
   };
-
-  const handleSubmit = validation.handleSubmit;
-
-  /* values */
-  const emailVal = validation.getValues('email');
-  const passwordVal = validation.getValues('password');
-
-  /* errors */
-  const emailErr = validation.formState.errors.email;
-  const passwordErr = validation.formState.errors.password;
-
-  /* touches */
-  const emailTouched = validation.formState.touchedFields.email;
-  const passwordTouched = validation.formState.touchedFields.password;
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -84,28 +64,26 @@ export const LoginForm: FC = () => {
   };
 
   return (
-    <FormProvider {...validation}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <TextField
-        {...validation.register('email')}
-        error={Boolean(emailTouched && emailErr)}
+        {...register('email')}
+        error={!!errors.email}
         fullWidth
-        helperText={Boolean(emailTouched && emailErr)}
+        helperText={errors.email?.message}
         label="Email Address"
         margin="normal"
         name="email"
         type="email"
-        value={emailVal}
       />
 
       <FormControl sx={{ width: '100%', marginTop: '10px' }} variant="outlined">
         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
         <OutlinedInput
-          {...validation.register('password')}
-          error={Boolean(passwordTouched && passwordErr)}
+          {...register('password')}
+          error={!!errors.password}
           fullWidth
           label="Password"
           name="password"
-          value={passwordVal}
           type={showPassword ? 'text' : 'password'}
           endAdornment={
             <InputAdornment position="end">
@@ -128,7 +106,6 @@ export const LoginForm: FC = () => {
       )}
       <Box sx={{ mt: 2 }}>
         <LoadingButton
-          onClick={() => handleSubmit(onSubmit)()}
           fullWidth
           size="large"
           type="submit"
@@ -138,6 +115,6 @@ export const LoginForm: FC = () => {
           Login
         </LoadingButton>
       </Box>
-    </FormProvider>
+    </form>
   );
 };
