@@ -11,7 +11,7 @@ import HttpException from '../exceptions/HttpException';
 import logger from '../utils/logger';
 import { User } from '../types/user.type';
 import { RegistrationData } from '../types/auth.type';
-import { TokenData, CreateTokenPayload } from '../types/auth.type';
+import { TokenData, DataStoredInToken } from '../types/auth.type';
 
 @injectable()
 class AuthService {
@@ -135,11 +135,11 @@ class AuthService {
     }
   }
 
-  public createJwtToken(createTokenPayload: CreateTokenPayload): TokenData {
+  public createJwtToken(DataStoredInToken: DataStoredInToken): TokenData {
     // eslint-disable-next-line camelcase
     const { jwtSecret } = this.serverConfig;
     const expiresIn: number = 60 * 20;
-    const token = jwt.sign(createTokenPayload, jwtSecret, { expiresIn });
+    const token = jwt.sign(DataStoredInToken, jwtSecret, { expiresIn });
     if (!token) {
       logger.log({
         level: 'error',

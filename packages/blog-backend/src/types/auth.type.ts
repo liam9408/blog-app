@@ -1,4 +1,4 @@
-export interface CreateTokenPayload {
+export interface DataStoredInToken {
   userId: number;
 }
 

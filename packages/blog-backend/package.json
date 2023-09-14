@@ -40,6 +40,8 @@
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
     "bcryptjs": "^2.4.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
