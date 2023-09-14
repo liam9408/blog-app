@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import logger from 'morgan';
 import { Route } from './types/routes.type';
+import errorMiddleware from './middlewares/error.middleware';
+import corsMiddleware from './middlewares/cors.middleware';
 
 import {
   sequelize,
@@ -65,6 +67,7 @@ class App {
     } else {
       this.app.use(logger('dev'));
     }
+    this.app.use(corsMiddleware());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ limit: '1000mb', extended: false }));
     this.app.use(cookieParser());
@@ -77,6 +80,7 @@ class App {
   }
 
   private initializeErrorHandling() {
+    this.app.use(errorMiddleware);
     this.app.set('trust proxy', true);
   }
 }

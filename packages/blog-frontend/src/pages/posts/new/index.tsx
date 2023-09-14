@@ -6,7 +6,6 @@ import NextLink from 'next/link';
 import { Box, Card, Container, Divider, Link, Typography } from '@mui/material';
 
 import { AuthGuard } from '@/components/organisms/AuthGuard';
-import { DashboardLayout } from '@/layout/dashboard/vertical-layout';
 
 const Home: NextPage = () => {
   return (
@@ -41,10 +40,6 @@ const Home: NextPage = () => {
   );
 };
 
-Home.getLayout = (page) => (
-  <AuthGuard>
-    <DashboardLayout>{page}</DashboardLayout>
-  </AuthGuard>
-);
+Home.getLayout = (page) => <AuthGuard>{page}</AuthGuard>;
 
 export default Home;

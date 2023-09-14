@@ -48,9 +48,13 @@ export const LoginForm: FC = () => {
   const { errors } = formState;
 
   const onSubmit = async (values: SignInData): Promise<void> => {
-    setLoading(true);
-    await login(values.email, values.password);
-    setLoading(false);
+    try {
+      setLoading(true);
+      await login(values.email, values.password);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+    }
   };
 
   const handleClickShowPassword = () => {

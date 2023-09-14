@@ -26,7 +26,7 @@ export const GuestGuard: FC<GuestGuardProps> = (props) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router.isReady]
+    [router.isReady, auth]
   );
 
   if (!checked) {

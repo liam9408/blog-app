@@ -14,7 +14,7 @@ import {
   SettingsProvider,
 } from '../contexts/settings-context';
 
-import { SplashScreen } from '../components/molecules/splash-screen';
+import { SplashScreen } from '../components/molecules/SplashScreen';
 
 import { AuthConsumer, AuthProvider } from '../contexts/auth-context';
 import { createTheme } from '../theme';
