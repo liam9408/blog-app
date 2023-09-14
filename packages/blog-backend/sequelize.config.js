@@ -2,19 +2,6 @@ require('dotenv').config();
 
 let dialectOptions = {};
 
-if (process.env.NODE_ENV !== 'local' && process.env.NODE_ENV !== 'test') {
-  dialectOptions = {
-    ssl: {
-      host: process.env.DB_HOST,
-      ca: Buffer.from(process.env.POSTGRES_SSL_SERVER_CA, 'base64'),
-      key: Buffer.from(process.env.POSTGRES_SSL_CLIENT_KEY, 'base64'),
-      cert: Buffer.from(process.env.POSTGRES_SSL_CLIENT_CERT, 'base64'),
-      rejectUnauthorized: false,
-      requestCert: true,
-    },
-  };
-}
-
 let config = {
   local: {
     username: process.env.POSTGRES_USERNAME,
