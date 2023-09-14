@@ -26,7 +26,6 @@ class Category extends Model {
       {
         sequelize,
         modelName: 'categories',
-        paranoid: true,
         indexes: [
           {
             unique: true,

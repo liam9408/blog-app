@@ -80,7 +80,7 @@ class PostService {
         label: 'Post Service - editPost',
         message: error.stack,
       });
-      throw new HttpException(500, 30006, 'Unable to edit posts');
+      throw new HttpException(500, 30006, 'Unable to create post');
     }
   }
 
@@ -94,7 +94,7 @@ class PostService {
         { ...dataToUpdate },
         {
           where: {
-            postId: postIds,
+            id: postIds,
           },
           transaction,
         }
@@ -106,7 +106,7 @@ class PostService {
         label: 'Post Service - editPost',
         message: error.stack,
       });
-      throw new HttpException(500, 30001, 'Unable to edit posts');
+      throw new HttpException(500, 30006, 'Unable to edit posts');
     }
   }
 
@@ -117,7 +117,7 @@ class PostService {
     try {
       const count = await this.postModel.destroy({
         where: {
-          postId: postIds,
+          id: postIds,
         },
         transaction,
       });
@@ -128,7 +128,7 @@ class PostService {
         label: 'Post Service - findAll',
         message: error.stack,
       });
-      throw new HttpException(500, 30001, 'Unable to delete posts');
+      throw new HttpException(500, 30006, 'Unable to delete posts');
     }
   }
 }

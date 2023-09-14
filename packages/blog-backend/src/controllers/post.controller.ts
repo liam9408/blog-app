@@ -1,12 +1,13 @@
 import { injectable } from 'inversify';
 import { NextFunction, Request, Response } from 'express';
-
+import { WhereOptions, Op } from 'sequelize';
 import { SERVICE_IDENTIFIER } from '../constants';
 import iocContainer from '../configs/ioc.config';
 
 import { PostService } from '../services';
 import logger from '../utils/logger';
 import { RequestWithIdentity } from 'request.type';
+import { getPagination, getOrderOptions } from '../utils/sequelize';
 
 @injectable()
 class PostController {
@@ -20,7 +21,44 @@ class PostController {
 
   public getPosts = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const resp = await this.postService.findAndCountAll({});
+      const { offset, limit, ...searchValues } = req.query;
+      let sort: any = 'desc';
+      let sortBy: any = 'createdAt';
+      if (req.query) {
+        sort = req.query.sort ? req.query.sort : sort;
+        sortBy = req.query.sortBy ? req.query.sortBy : sortBy;
+      }
+
+      const searchParams: WhereOptions = {};
+
+      for (const [searchByKey, searchByValue] of Object.entries(searchValues)) {
+        switch (searchByKey) {
+          case 'id':
+            searchParams.id = String(searchByValue)
+              .split(',')
+              .map((val) => Number(val));
+            break;
+          case 'title':
+            searchParams.description = {
+              [Op.iLike]: `%${searchByValue}%`,
+            };
+            break;
+          case 'status':
+            searchParams.status = {
+              [Op.in]: String(searchByValue).split(','),
+            };
+            searchParams.actionNeeded = false;
+            break;
+        }
+      }
+
+      const query = {
+        ...searchParams,
+        ...getPagination(limit, offset),
+        ...getOrderOptions([{ sortKey: sortBy, sortOrder: sort }]),
+      };
+
+      const resp = await this.postService.findAndCountAll(query);
       if (resp) {
         res.status(200).json({ success: true, data: resp });
       }

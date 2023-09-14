@@ -15,12 +15,13 @@ class CategoryService {
       const records = await this.categoryModel.findAll(query);
       return records.map((row: any) => row.toJSON() as Category);
     } catch (error) {
+      console.log(error);
       logger.error({
         level: 'error',
         label: 'Category Service - findAll',
         message: error.stack,
       });
-      throw new HttpException(500, 30001, 'Unable to find all categories');
+      throw new HttpException(500, 30006, 'Unable to find all categories');
     }
   }
 }

@@ -27,7 +27,7 @@ class AuthService {
 
   private async createToken(userId: number): Promise<TokenData> {
     const { jwtSecret } = this.serverConfig;
-    const expiresIn: number = 60 * 20;
+    const expiresIn: number = 60 * 60 * 24;
     const token = jwt.sign({ userId }, jwtSecret, { expiresIn });
 
     if (!token) {
