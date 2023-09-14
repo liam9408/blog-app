@@ -1,7 +1,11 @@
 import { Sequelize, Model, DataTypes } from 'sequelize';
+import { values as getValues } from 'lodash';
 
+import enums from '../../../shared/enums';
 import User from './user.model';
 import Category from './category.model';
+
+const { status } = enums.POSTS;
 
 class Post extends Model {
   public id!: number;
@@ -40,7 +44,9 @@ class Post extends Model {
           type: new DataTypes.TEXT(),
         },
         status: {
-          type: new DataTypes.STRING(255),
+          type: DataTypes.ENUM,
+          values: getValues(status),
+          defaultValue: status.DRAFT,
         },
         categoryId: {
           type: DataTypes.INTEGER,

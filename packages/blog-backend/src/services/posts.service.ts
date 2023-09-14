@@ -11,7 +11,7 @@ class PostService {
   public postModel = PostModel;
 
   public async findAndCountAll(
-    query: FindOptions
+    query?: FindOptions
   ): Promise<{ rows: Post[]; count: number }> {
     try {
       const records = await this.postModel.findAndCountAll(query);
@@ -30,7 +30,7 @@ class PostService {
     }
   }
 
-  public async findAll(query: FindOptions): Promise<Post[]> {
+  public async findAll(query?: FindOptions): Promise<Post[]> {
     try {
       const records = await this.postModel.findAll(query);
       return records.map((row: any) => row.toJSON() as Post);
@@ -44,9 +44,12 @@ class PostService {
     }
   }
 
-  public async getPostById(postId: number): Promise<Post> {
+  public async getPostById(
+    postId: number,
+    options?: FindOptions
+  ): Promise<Post> {
     try {
-      const record = await this.postModel.findByPk(postId);
+      const record = await this.postModel.findByPk(postId, options);
       return record.toJSON();
     } catch (error) {
       logger.error({
@@ -58,10 +61,33 @@ class PostService {
     }
   }
 
+  public async createPost(
+    dataToCreate: Post,
+    transaction?: Transaction
+  ): Promise<Post> {
+    try {
+      const newPost = await this.postModel.create(
+        { ...dataToCreate },
+        {
+          transaction,
+        }
+      );
+      return newPost.toJSON();
+    } catch (error) {
+      console.log(error);
+      logger.error({
+        level: 'error',
+        label: 'Post Service - editPost',
+        message: error.stack,
+      });
+      throw new HttpException(500, 30006, 'Unable to edit posts');
+    }
+  }
+
   public async editPost(
     dataToUpdate: Post,
     postIds: number[],
-    transaction: Transaction
+    transaction?: Transaction
   ): Promise<{ count: number; data?: Post[] }> {
     try {
       const [count] = await this.postModel.update(
@@ -86,7 +112,7 @@ class PostService {
 
   public async delete(
     postIds: number[],
-    transaction: Transaction
+    transaction?: Transaction
   ): Promise<{ count: number }> {
     try {
       const count = await this.postModel.destroy({

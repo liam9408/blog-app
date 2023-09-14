@@ -2,6 +2,8 @@ const SERVICE_IDENTIFIER = {
   SERVER_CONFIG: Symbol('ServerConfig'),
   DEFAULT_SERVICE: Symbol('DefaultService'),
   AUTH_SERVICE: Symbol('AuthService'),
+  POST_SERVICE: Symbol('PostService'),
+  CATEGORY_SERVICE: Symbol('CategoryService'),
 };
 
 const DTO_VALIDATOR = {

@@ -5,7 +5,12 @@ import { Container } from 'inversify';
 import { SERVICE_IDENTIFIER } from '../constants';
 import ServerConfig from './server.config';
 
-import { DefaultService, AuthService } from '../services';
+import {
+  DefaultService,
+  AuthService,
+  PostService,
+  CategoryService,
+} from '../services';
 
 const container = new Container();
 
@@ -19,5 +24,11 @@ container
   .to(DefaultService);
 
 container.bind<AuthService>(SERVICE_IDENTIFIER.AUTH_SERVICE).to(AuthService);
+
+container.bind<PostService>(SERVICE_IDENTIFIER.POST_SERVICE).to(PostService);
+
+container
+  .bind<CategoryService>(SERVICE_IDENTIFIER.CATEGORY_SERVICE)
+  .to(CategoryService);
 
 export default container;

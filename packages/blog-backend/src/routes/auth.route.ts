@@ -5,7 +5,7 @@ import authMiddleware from '../middlewares/auth.middleware';
 import validationMiddleware from '../middlewares/validation.middleware';
 import { AuthorizeDto, RegisterDto } from '../dtos/auth';
 
-class DefaultRoute implements Route {
+class AuthRoute implements Route {
   public path = '/api/auth';
 
   public router = Router();
@@ -26,7 +26,6 @@ class DefaultRoute implements Route {
     this.router.post(
       `${this.path}/signin`,
       validationMiddleware(AuthorizeDto),
-      authMiddleware,
       this.authController.authorize
     );
 
@@ -44,4 +43,4 @@ class DefaultRoute implements Route {
   }
 }
 
-export default DefaultRoute;
+export default AuthRoute;

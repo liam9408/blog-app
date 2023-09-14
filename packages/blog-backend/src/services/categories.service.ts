@@ -10,7 +10,7 @@ import { Category } from 'category.type';
 class CategoryService {
   public categoryModel = CategoryModel;
 
-  public async findAll(query: FindOptions): Promise<Category[]> {
+  public async findAll(query?: FindOptions): Promise<Category[]> {
     try {
       const records = await this.categoryModel.findAll(query);
       return records.map((row: any) => row.toJSON() as Category);

@@ -2,8 +2,13 @@ import './environment';
 
 import App from './app';
 
-import { DefaultRoute, AuthRoute } from './routes';
+import { DefaultRoute, AuthRoute, PostRoute, CategoryRoute } from './routes';
 
-const app = new App([new DefaultRoute(), new AuthRoute()]);
+const app = new App([
+  new DefaultRoute(),
+  new AuthRoute(),
+  new PostRoute(),
+  new CategoryRoute(),
+]);
 
 app.listen();
