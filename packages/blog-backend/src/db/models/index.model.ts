@@ -3,6 +3,8 @@ import { Sequelize } from 'sequelize';
 import { DialectOptions } from '../../types/sequelize.type';
 
 import Users from './user.model';
+import Categories from './category.model';
+import Posts from './post.model';
 
 console.info('Initializing sequelize...');
 
@@ -12,22 +14,7 @@ const sqlInitialize = () => {
     // same as host string above
     socketPath: process.env.POSTGRES_HOST,
   };
-  if (
-    (process.env.NODE_ENV === 'local' &&
-      process.env.POSTGRES_HOST !== 'localhost') ||
-    process.env.NODE_ENV === 'development' ||
-    process.env.NODE_ENV === 'staging' ||
-    process.env.NODE_ENV === 'production'
-  ) {
-    dialectOptions.ssl = {
-      host: process.env.DB_HOST,
-      ca: Buffer.from(process.env.POSTGRES_SSL_SERVER_CA, 'base64'),
-      key: Buffer.from(process.env.POSTGRES_SSL_CLIENT_KEY, 'base64'),
-      cert: Buffer.from(process.env.POSTGRES_SSL_CLIENT_CERT, 'base64'),
-      rejectUnauthorized: false,
-      requestCert: true,
-    };
-  }
+
   return new Sequelize(
     process.env.POSTGRES_DATABASE,
     process.env.POSTGRES_USERNAME,
@@ -53,6 +40,8 @@ export const initModels = async (sequelizeInst: Sequelize) => {
   try {
     console.info('Initializing sequelize models...');
     await Users.initModel(sequelizeInst);
+    await Categories.initModel(sequelizeInst);
+    await Posts.initModel(sequelizeInst);
   } catch (error) {
     console.log(error);
   }
@@ -62,6 +51,8 @@ export const initAssociation = async () => {
   try {
     console.info('Initializing sequelize associations...');
     await Users.initAssociation();
+    await Categories.initAssociation();
+    await Posts.initAssociation();
   } catch (error) {
     console.log(error);
   }

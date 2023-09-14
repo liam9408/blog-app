@@ -6,6 +6,12 @@ import hpp from 'hpp';
 import logger from 'morgan';
 import { Route } from './types/routes.type';
 
+import {
+  sequelize,
+  initModels,
+  initAssociation,
+} from './db/models/index.model';
+
 class App {
   public app: express.Application;
 
@@ -17,6 +23,8 @@ class App {
     this.app = express();
     this.port = process.env.PORT || 3000;
 
+    App.initializeSequelize();
+
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
@@ -27,7 +35,7 @@ class App {
       this.app.listen(this.port, async () => {
         console.log(`🚀 App listening on the port ${this.port}`);
         try {
-          // todo: db
+          await sequelize.authenticate();
           console.info(
             'Database Connection has been established successfully.'
           );
@@ -38,6 +46,11 @@ class App {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  public static async initializeSequelize() {
+    await initModels(sequelize);
+    await initAssociation();
   }
 
   public getServer() {
@@ -52,6 +65,7 @@ class App {
     } else {
       this.app.use(logger('dev'));
     }
+    this.app.use(express.json());
     this.app.use(express.urlencoded({ limit: '1000mb', extended: false }));
     this.app.use(cookieParser());
   }
