@@ -7,7 +7,7 @@ export interface User {
   lastName?: string;
   password?: string;
   avatar?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  posts: Post[];
+  createdAt?: Date;
+  updatedAt?: Date;
+  posts?: Post[];
 }
