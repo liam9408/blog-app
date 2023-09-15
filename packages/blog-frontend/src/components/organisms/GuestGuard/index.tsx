@@ -20,7 +20,7 @@ export const GuestGuard: FC<GuestGuardProps> = (props) => {
       }
 
       if (auth.isAuthenticated) {
-        router.push('/posts').catch(console.error);
+        router.push('/activities').catch(console.error);
       } else {
         setChecked(true);
       }

@@ -54,6 +54,7 @@ export const LoginForm: FC = () => {
       await login(values.email, values.password);
       setLoading(false);
     } catch (err) {
+      setError(err);
       setLoading(false);
     }
   };

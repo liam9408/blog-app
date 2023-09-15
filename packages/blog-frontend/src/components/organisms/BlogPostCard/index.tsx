@@ -30,7 +30,8 @@ interface BlogPostCardProps {
 
 export const BlogPostCardSkeleton = () => {
   return (
-    <Card sx={{ maxWidth: 345, m: 2 }}>
+    <Card sx={{ maxWidth: '100%', m: 2 }}>
+      <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />
       <CardHeader
         avatar={
           <Skeleton
@@ -43,12 +44,12 @@ export const BlogPostCardSkeleton = () => {
         title={
           <Skeleton
             animation="wave"
-            height={10}
-            width="80%"
+            height={20}
+            width="100%"
             style={{ marginBottom: 6 }}
           />
         }
-        subheader={<Skeleton animation="wave" height={10} width="40%" />}
+        subheader={<Skeleton animation="wave" height={20} width="100%" />}
       />
     </Card>
   );
@@ -77,20 +78,48 @@ export const BlogPostCard: FC<BlogPostCardProps> = (props) => {
       }}
       {...other}
     >
-      <NextLink href={`/posts/${id}`} target="_blank" passHref>
+      {/* <NextLink href={`/posts/${id}`} target="_blank" passHref>
         <Link color="textPrimary" component="a" target="_blank" variant="h5">
           <CardMedia component="a" image={cover} sx={{ height: 280 }} />
         </Link>
-      </NextLink>
+      </NextLink> */}
       <CardContent>
-        <Box sx={{ mb: 2 }}>
-          <Chip label={category} />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <NextLink href={`/posts/${id}`} target="_blank" passHref>
+            <Link
+              color="textPrimary"
+              component="a"
+              target="_blank"
+              variant="h5"
+            >
+              {title}
+            </Link>
+          </NextLink>
+          <Box sx={{ mb: 2 }}>
+            <Chip label={category} />
+          </Box>
         </Box>
-        <NextLink href={`/posts/${id}`} target="_blank" passHref>
-          <Link color="textPrimary" component="a" target="_blank" variant="h5">
-            {title}
-          </Link>
-        </NextLink>
+        <Typography
+          color="textSecondary"
+          sx={{
+            height: 48,
+            mt: 1,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: 2,
+          }}
+          variant="body1"
+        >
+          {shortDescription}
+        </Typography>
         <Typography
           color="textSecondary"
           sx={{
