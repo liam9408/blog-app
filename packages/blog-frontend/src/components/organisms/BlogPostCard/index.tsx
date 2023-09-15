@@ -77,15 +77,17 @@ export const BlogPostCard: FC<BlogPostCardProps> = (props) => {
       }}
       {...other}
     >
-      <NextLink href={`/posts/${id}`} passHref>
-        <CardMedia component="a" image={cover} sx={{ height: 280 }} />
+      <NextLink href={`/posts/${id}`} target="_blank" passHref>
+        <Link color="textPrimary" component="a" target="_blank" variant="h5">
+          <CardMedia component="a" image={cover} sx={{ height: 280 }} />
+        </Link>
       </NextLink>
       <CardContent>
         <Box sx={{ mb: 2 }}>
           <Chip label={category} />
         </Box>
-        <NextLink href={`/posts/${id}`} passHref>
-          <Link color="textPrimary" component="a" variant="h5">
+        <NextLink href={`/posts/${id}`} target="_blank" passHref>
+          <Link color="textPrimary" component="a" target="_blank" variant="h5">
             {title}
           </Link>
         </NextLink>

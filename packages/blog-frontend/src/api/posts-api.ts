@@ -35,6 +35,21 @@ class PostsApi {
       }
     });
   }
+
+  async editPost(
+    postId: number,
+    data: Post
+  ): Promise<{ success: boolean; data: Post }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const resp = apiService.put(`/posts/${postId}`, { ...data });
+        resolve(resp);
+      } catch (err) {
+        console.error('[Posts Api]: ', err);
+        reject(new Error('Internal server error'));
+      }
+    });
+  }
 }
 
 export const postApi = new PostsApi();

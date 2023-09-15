@@ -9,10 +9,12 @@ import { DashboardLayout } from 'src/layout/dashboard/vertical-layout';
 import { postApi } from 'src/api/posts-api';
 import { useMounted } from 'src/hooks/use-mounted';
 import { useAuth } from 'src/hooks/use-auth';
+import { useScrollPosition } from 'src/hooks/use-scroll-position';
 import {
   BlogPostCard,
   BlogPostCardSkeleton,
 } from 'src/components/organisms/BlogPostCard';
+import next from 'next/types';
 
 const Posts: NextPage = () => {
   const isMounted = useMounted();
@@ -33,7 +35,7 @@ const Posts: NextPage = () => {
       };
       const resp = await postApi.getPosts(query);
       if (resp.success) {
-        setPosts(resp.data.rows);
+        setPosts([...posts, resp.data.rows]);
         setLoading(false);
       }
     } catch (err) {
@@ -45,6 +47,13 @@ const Posts: NextPage = () => {
   useEffect(() => {
     getPosts();
   }, []);
+
+  // const scrollPosition = useScrollPosition();
+  // if (scrollPosition > 90) {
+  //   const nextPage = page + 1;
+  //   getPosts();
+  //   setPage(nextPage);
+  // }
 
   return (
     <>

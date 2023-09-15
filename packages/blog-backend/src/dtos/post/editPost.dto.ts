@@ -10,6 +10,9 @@ export class EditPostDto {
   @IsString()
   public content: string;
 
+  @IsString()
+  public status: string;
+
   @IsNumber()
   @IsOptional()
   public categoryId: string;

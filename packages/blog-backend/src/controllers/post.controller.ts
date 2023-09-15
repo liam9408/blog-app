@@ -142,6 +142,8 @@ class PostController {
       const dataToUpdate = {
         ...body,
       };
+
+      console.log(dataToUpdate);
       const resp = await this.postService.editPost(dataToUpdate, [
         Number(postId),
       ]);

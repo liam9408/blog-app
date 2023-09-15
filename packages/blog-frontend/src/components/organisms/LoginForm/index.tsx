@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import type { FC } from 'react';
 import * as Yup from 'yup';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 import {
   Box,
   FormHelperText,
@@ -13,6 +12,7 @@ import {
   InputLabel,
   OutlinedInput,
 } from '@mui/material';
+import { yupResolver } from '@hookform/resolvers/yup';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -26,21 +26,22 @@ export const LoginForm: FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const initialValues: SignInData = {
-    email: '',
-    password: '',
-  };
-
-  const validationSchema = Yup.object({
+  const validationSchema = Yup.object().shape({
     email: Yup.string()
+      .default('')
       .email('Must be a valid email')
       .max(255)
       .required('Email is required'),
-    password: Yup.string().max(255).required('Password is required'),
+    password: Yup.string()
+      .default('')
+      .max(255)
+      .required('Password is required'),
   });
 
-  const form = useForm<SignInData>({
-    defaultValues: initialValues,
+  const form = useForm({
+    defaultValues: validationSchema.getDefault(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: yupResolver<any>(validationSchema),
   });
 
   const { register, handleSubmit, formState } = form;
