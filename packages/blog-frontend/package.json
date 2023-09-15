@@ -39,6 +39,7 @@
     "@types/yup": "^0.29.13",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "cookies-next": "^2.1.1",
+    "date-fns": "^2.30.0",
     "draft-js": "^0.11.7",
     "iconv-lite": "^0.6.3",
     "isomorphic-fetch": "^3.0.0",

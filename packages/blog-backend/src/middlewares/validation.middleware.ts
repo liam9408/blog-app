@@ -15,7 +15,6 @@ function validationMiddleware(
     if (req.method === 'GET') {
       body = req.query;
     }
-    console.log(body);
 
     validate(plainToClass(type, body), {
       skipMissingProperties,

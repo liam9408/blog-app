@@ -2,13 +2,16 @@ import { User } from './user.type.js';
 import { Category } from './category.type.js';
 
 export interface Post {
-  id: number;
+  id?: number;
   userId?: number;
   title?: string;
+  description?: string;
   content?: string;
   categoryId?: number;
-  createdAt: Date;
-  updatedAt: Date;
-  user: User;
-  category: Category;
+  status?: 'draft' | 'published';
+  publishedAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  user?: User;
+  category?: Category;
 }

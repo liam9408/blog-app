@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import type { FC, ReactNode } from 'react';
 import NextLink from 'next/link';
 import PropTypes from 'prop-types';
-import { Box, Button, ListItem, Tooltip } from '@mui/material';
+import { Box, Button, ListItem } from '@mui/material';
 import type { ListItemProps } from '@mui/material';
 import { Category } from '../../../../types/category.type';
 

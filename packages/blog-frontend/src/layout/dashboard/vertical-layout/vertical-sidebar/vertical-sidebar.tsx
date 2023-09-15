@@ -98,12 +98,6 @@ export const VerticalSidebarComponent: FC<VerticalSidebarComponentProps> = (
               />
             </Box>
           </div>
-          <Divider
-            sx={{
-              borderColor: '#2D3748', // dark divider
-              mb: 3,
-            }}
-          />
           <Box sx={{ flexGrow: 1 }}>
             {categories.map((category) => (
               <DashboardSidebarItem

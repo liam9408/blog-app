@@ -18,8 +18,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
       content: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
       },
       status: {
@@ -33,6 +37,9 @@ module.exports = {
           model: 'categories',
           key: 'id',
         },
+      },
+      publishedAt: {
+        type: Sequelize.DATE,
       },
       createdAt: {
         type: Sequelize.DATE,

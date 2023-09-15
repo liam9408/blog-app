@@ -18,15 +18,15 @@ class CategoryRoute implements Route {
 
   private initializeRoutes() {
     this.router.get(
-      `${this.path}`,
-      authMiddleware,
-      this.postController.getPosts
-    );
-
-    this.router.get(
       `${this.path}/:postId`,
       authMiddleware,
       this.postController.getPost
+    );
+
+    this.router.get(
+      `${this.path}`,
+      authMiddleware,
+      this.postController.getPosts
     );
 
     this.router.post(

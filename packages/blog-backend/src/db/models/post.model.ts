@@ -14,9 +14,13 @@ class Post extends Model {
 
   public title: string;
 
+  public description: string;
+
   public content: string;
 
   public categoryId: number;
+
+  public publishedAt: Date;
 
   public readonly createdAt!: Date;
 
@@ -38,6 +42,9 @@ class Post extends Model {
           },
         },
         title: {
+          type: new DataTypes.STRING(255),
+        },
+        description: {
           type: new DataTypes.TEXT(),
         },
         content: {
@@ -54,6 +61,9 @@ class Post extends Model {
             model: Category,
             key: 'id',
           },
+        },
+        publishedAt: {
+          type: DataTypes.DATE,
         },
       },
       {

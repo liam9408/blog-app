@@ -5,6 +5,9 @@ export class EditPostDto {
   public title: string;
 
   @IsString()
+  public description: string;
+
+  @IsString()
   public content: string;
 
   @IsNumber()

@@ -2,19 +2,33 @@ import { injectable } from 'inversify';
 import { FindOptions, Transaction } from 'sequelize';
 
 import PostModel from '../db/models/post.model';
+import UserModel from '../db/models/user.model';
+import CategoryModel from '../db/models/category.model';
 import HttpException from '../exceptions/HttpException';
 import logger from '../utils/logger';
 import { Post } from '../types/posts.type';
+import Category from '../db/models/category.model';
 
 @injectable()
 class PostService {
   public postModel = PostModel;
 
+  public userModel = UserModel;
+
+  public categoryModel = CategoryModel;
+
   public async findAndCountAll(
     query?: FindOptions
   ): Promise<{ rows: Post[]; count: number }> {
     try {
-      const records = await this.postModel.findAndCountAll(query);
+      const records = await this.postModel.findAndCountAll({
+        ...query,
+        attributes: { exclude: ['content'] },
+        include: [
+          { model: this.userModel, attributes: { exclude: ['password'] } },
+          { model: this.categoryModel },
+        ],
+      });
       const resp = {
         ...records,
         rows: records.rows.map((row: any) => row.toJSON() as Post),
@@ -32,7 +46,13 @@ class PostService {
 
   public async findAll(query?: FindOptions): Promise<Post[]> {
     try {
-      const records = await this.postModel.findAll(query);
+      const records = await this.postModel.findAll({
+        ...query,
+        include: [
+          { model: this.userModel, attributes: { exclude: ['password'] } },
+          { model: this.categoryModel },
+        ],
+      });
       return records.map((row: any) => row.toJSON() as Post);
     } catch (error) {
       logger.error({
@@ -49,7 +69,14 @@ class PostService {
     options?: FindOptions
   ): Promise<Post> {
     try {
-      const record = await this.postModel.findByPk(postId, options);
+      console.log(typeof postId);
+      const record = await this.postModel.findByPk(postId, {
+        ...options,
+        include: [
+          { model: this.userModel, attributes: { exclude: ['password'] } },
+          { model: this.categoryModel },
+        ],
+      });
       return record.toJSON();
     } catch (error) {
       logger.error({
