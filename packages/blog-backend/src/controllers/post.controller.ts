@@ -4,7 +4,7 @@ import { WhereOptions, Op } from 'sequelize';
 import { SERVICE_IDENTIFIER } from '../constants';
 import iocContainer from '../configs/ioc.config';
 
-import { PostService } from '../services';
+import { PostService, CategoryService } from '../services';
 import logger from '../utils/logger';
 import { RequestWithIdentity } from 'request.type';
 import { getPagination, getOrderOptions } from '../utils/sequelize';
@@ -13,10 +13,18 @@ import { getPagination, getOrderOptions } from '../utils/sequelize';
 class PostController {
   public postService: PostService;
 
+  public categoryService: CategoryService;
+
   constructor(
-    postService = iocContainer.get<PostService>(SERVICE_IDENTIFIER.POST_SERVICE)
+    postService = iocContainer.get<PostService>(
+      SERVICE_IDENTIFIER.POST_SERVICE
+    ),
+    categoryService = iocContainer.get<CategoryService>(
+      SERVICE_IDENTIFIER.CATEGORY_SERVICE
+    )
   ) {
     this.postService = postService;
+    this.categoryService = categoryService;
   }
 
   public getPosts = async (req: Request, res: Response, next: NextFunction) => {
@@ -30,6 +38,8 @@ class PostController {
       }
 
       const searchParams: WhereOptions = {};
+
+      console.log(searchValues);
 
       for (const [searchByKey, searchByValue] of Object.entries(searchValues)) {
         switch (searchByKey) {
@@ -49,11 +59,18 @@ class PostController {
             };
             searchParams.actionNeeded = false;
             break;
+          case 'category':
+            console.log(searchByValue);
+            const category = await this.categoryService.getCategoryByName(
+              String(searchByValue)
+            );
+            searchParams.categoryId = category.id;
+            break;
         }
       }
 
       const query = {
-        ...searchParams,
+        where: { ...searchParams },
         ...getPagination(limit, offset),
         ...getOrderOptions([{ sortKey: sortBy, sortOrder: sort }]),
       };

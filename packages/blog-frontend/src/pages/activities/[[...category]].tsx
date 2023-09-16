@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 
 import {
   Box,
@@ -15,7 +16,6 @@ import { AuthGuard } from 'src/components/organisms/AuthGuard';
 import { DashboardLayout } from 'src/layout/dashboard/vertical-layout';
 import { postApi } from 'src/api/posts-api';
 import { useMounted } from 'src/hooks/use-mounted';
-import { useAuth } from 'src/hooks/use-auth';
 import { useScrollPosition } from 'src/hooks/use-scroll-position';
 import {
   BlogPostCard,
@@ -25,7 +25,8 @@ import {
 const Activities: NextPage = () => {
   const isMounted = useMounted();
 
-  const { user } = useAuth();
+  const router = useRouter();
+  const { category } = router.query;
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,23 +35,29 @@ const Activities: NextPage = () => {
   const [postsPerPage, setPostsPerPage] = useState<number>(10);
   const [prevPosition, setPrevPosition] = useState(0);
 
-  const getPosts = useCallback(async () => {
-    try {
-      setLoading(true);
-      const query = {
-        limit: postsPerPage,
-        offset: page,
-      };
-      const resp = await postApi.getPosts(query);
-      if (resp.success) {
-        setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
+  const getPosts = useCallback(
+    async (category?: string) => {
+      try {
+        setLoading(true);
+        const query = {
+          limit: postsPerPage,
+          offset: page,
+          category,
+        };
+        setTimeout(async () => {
+          const resp = await postApi.getPosts(query);
+          if (resp.success) {
+            setPosts([...resp.data.rows]);
+            setLoading(false);
+          }
+        }, 1000);
+      } catch (err) {
+        console.error(err);
         setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-    }
-  }, [isMounted]);
+    },
+    [isMounted]
+  );
 
   const handlePagination = useCallback(
     async (offset?: number) => {
@@ -59,6 +66,7 @@ const Activities: NextPage = () => {
           const query = {
             limit: postsPerPage,
             offset: offset,
+            category: category && category[0],
           };
 
           const resp = await postApi.getPosts(query);
@@ -72,12 +80,15 @@ const Activities: NextPage = () => {
         setFetchingMore(false);
       }
     },
-    [isMounted]
+    [isMounted, router.query]
   );
 
   useEffect(() => {
-    getPosts();
-  }, []);
+    if (router.isReady) {
+      console.log(category, router.query, router);
+      getPosts(category && encodeURIComponent(category[0]));
+    }
+  }, [router, postsPerPage]);
 
   const scrollPosition = useScrollPosition();
   useEffect(() => {
@@ -129,7 +140,7 @@ const Activities: NextPage = () => {
             }}
           >
             <Typography variant="h5">Activities</Typography>
-            <NextLink href="/posts/new" passHref>
+            <NextLink href="/post/new" passHref>
               <Button component="a" variant="contained">
                 New Post
               </Button>
@@ -138,6 +149,7 @@ const Activities: NextPage = () => {
 
           {loading && (
             <>
+              <BlogPostCardSkeleton />
               <BlogPostCardSkeleton />
               <BlogPostCardSkeleton />
             </>

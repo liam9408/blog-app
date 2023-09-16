@@ -24,6 +24,40 @@ class CategoryService {
       throw new HttpException(500, 30006, 'Unable to find all categories');
     }
   }
+
+  public async getCategoryByName(categoryName: string): Promise<Category> {
+    try {
+      const record = await this.categoryModel.findOne({
+        where: {
+          name: categoryName,
+        },
+      });
+      return record.toJSON() as Category;
+    } catch (error) {
+      console.log(error);
+      logger.error({
+        level: 'error',
+        label: 'Category Service - getCategory',
+        message: error.stack,
+      });
+      throw new HttpException(500, 30006, 'Unable to find all categories');
+    }
+  }
+
+  public async findById(categoryId: number): Promise<Category> {
+    try {
+      const record = await this.categoryModel.findByPk(categoryId);
+      return record.toJSON() as Category;
+    } catch (error) {
+      console.log(error);
+      logger.error({
+        level: 'error',
+        label: 'Category Service - findByPk',
+        message: error.stack,
+      });
+      throw new HttpException(500, 30006, 'Unable to find all categories');
+    }
+  }
 }
 
 export default CategoryService;

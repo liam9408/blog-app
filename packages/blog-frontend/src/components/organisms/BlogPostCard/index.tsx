@@ -92,7 +92,7 @@ export const BlogPostCard: FC<BlogPostCardProps> = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          <NextLink href={`/posts/${id}`} target="_blank" passHref>
+          <NextLink href={`/post/${id}`} target="_blank" passHref>
             <Link
               color="textPrimary"
               component="a"

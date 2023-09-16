@@ -1,13 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FC } from 'react';
-import NextLink from 'next/link';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import { Box, Divider } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { useAuth } from '../../../../hooks/use-auth';
-import { Logo } from '../../../../components/atoms/Logo';
 import { Scrollbar } from '../../../../components/molecules/ScrollBar';
 import { DashboardSidebarItem } from './vertical-sidebar-item';
 import { useHover } from '../../../..//hooks/use-hover';
@@ -24,7 +20,6 @@ export const VerticalSidebarComponent: FC<VerticalSidebarComponentProps> = (
   props
 ) => {
   const { onClose, query } = props;
-  const { user, changeCompany } = useAuth();
   const isMounted = useMounted();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -40,7 +35,7 @@ export const VerticalSidebarComponent: FC<VerticalSidebarComponentProps> = (
             data.map((category) => ({
               id: category.id,
               name: category.name,
-              path: `home?category=${category.id}`,
+              path: `${category.name}`,
             }))
           );
         setLoading(false);
@@ -99,6 +94,16 @@ export const VerticalSidebarComponent: FC<VerticalSidebarComponentProps> = (
             </Box>
           </div>
           <Box sx={{ flexGrow: 1 }}>
+            <DashboardSidebarItem
+              item={{ name: 'All', path: '/' }}
+              query={query}
+              sx={{
+                mt: 2,
+                '& + &': {
+                  mt: 2,
+                },
+              }}
+            />
             {categories.map((category) => (
               <DashboardSidebarItem
                 key={`category-${category.id}`}

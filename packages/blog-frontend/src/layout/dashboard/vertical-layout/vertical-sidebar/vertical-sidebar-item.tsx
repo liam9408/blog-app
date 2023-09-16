@@ -27,7 +27,7 @@ export const DashboardSidebarItem: FC<DashboardSidebarItemProps> = (props) => {
         px: 2,
       }}
     >
-      <NextLink href={item.path as string} passHref>
+      <NextLink href={item.path} passHref>
         <Button
           component="a"
           startIcon={icon}
