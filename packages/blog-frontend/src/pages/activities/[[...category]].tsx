@@ -10,6 +10,7 @@ import {
   Typography,
   CircularProgress,
   Button,
+  TablePagination,
 } from '@mui/material';
 
 import { AuthGuard } from 'src/components/organisms/AuthGuard';
@@ -31,23 +32,25 @@ const Activities: NextPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState<number>(0);
+  const [postsCount, setPostsCount] = useState<number>(0);
   const [fetchingMore, setFetchingMore] = useState(false);
   const [postsPerPage, setPostsPerPage] = useState<number>(10);
   const [prevPosition, setPrevPosition] = useState(0);
 
   const getPosts = useCallback(
-    async (category?: string) => {
+    async (offset: number, category?: string) => {
       try {
         setLoading(true);
         const query = {
           limit: postsPerPage,
-          offset: page,
+          offset,
           category,
         };
         setTimeout(async () => {
           const resp = await postApi.getPosts(query);
           if (resp.success) {
             setPosts([...resp.data.rows]);
+            setPostsCount(resp.data.count);
             setLoading(false);
           }
         }, 1000);
@@ -59,55 +62,63 @@ const Activities: NextPage = () => {
     [isMounted]
   );
 
-  const handlePagination = useCallback(
-    async (offset?: number) => {
-      try {
-        setTimeout(async () => {
-          const query = {
-            limit: postsPerPage,
-            offset: offset,
-            category: category && category[0],
-          };
+  const handlePageChange = (
+    event: MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
 
-          const resp = await postApi.getPosts(query);
-          if (resp.success) {
-            setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
-            setFetchingMore(false);
-          }
-        }, 2000);
-      } catch (err) {
-        console.error(err);
-        setFetchingMore(false);
-      }
-    },
-    [isMounted, router.query]
-  );
+  // const handleFetchMore = useCallback(
+  //   async (offset?: number) => {
+  //     try {
+  //       setTimeout(async () => {
+  //         const query = {
+  //           limit: postsPerPage,
+  //           offset: offset,
+  //           category: category && category[0],
+  //         };
+
+  //         const resp = await postApi.getPosts(query);
+  //         if (resp.success) {
+  //           setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
+  //           setFetchingMore(false);
+  //         }
+  //       }, 2000);
+  //     } catch (err) {
+  //       console.error(err);
+  //       setFetchingMore(false);
+  //     }
+  //   },
+  //   [isMounted, router.query]
+  // );
 
   useEffect(() => {
     if (router.isReady) {
-      console.log(category, router.query, router);
-      getPosts(category && encodeURIComponent(category[0]));
+      const queryCategory = category && encodeURIComponent(category[0]);
+      const offset = page === 0 ? page : page * postsPerPage;
+      getPosts(offset, queryCategory);
     }
-  }, [router, postsPerPage]);
+  }, [router, postsPerPage, page]);
 
-  const scrollPosition = useScrollPosition();
-  useEffect(() => {
-    if (scrollPosition > prevPosition) {
-      const currentPositionRoudned = Math.round(scrollPosition);
-      if (
-        currentPositionRoudned >= 95 &&
-        currentPositionRoudned <= 98 &&
-        !fetchingMore
-      ) {
-        const newPage = page + 1;
-        setPage(newPage);
+  // const scrollPosition = useScrollPosition();
+  // useEffect(() => {
+  //   if (scrollPosition > prevPosition) {
+  //     const currentPositionRoudned = Math.round(scrollPosition);
+  //     if (
+  //       currentPositionRoudned >= 95 &&
+  //       currentPositionRoudned <= 98 &&
+  //       !fetchingMore
+  //     ) {
+  //       const newPage = page + 1;
+  //       setPage(newPage);
 
-        handlePagination(newPage * postsPerPage);
-        setPrevPosition(scrollPosition);
-        setFetchingMore(true);
-      }
-    }
-  }, [scrollPosition]);
+  //       handlePagination(newPage * postsPerPage);
+  //       setPrevPosition(scrollPosition);
+  //       setFetchingMore(true);
+  //     }
+  //   }
+  // }, [scrollPosition]);
 
   return (
     <>
@@ -171,7 +182,7 @@ const Activities: NextPage = () => {
                 />
               );
             })}
-          {fetchingMore && (
+          {/* {fetchingMore && (
             <Box
               sx={{
                 my: 5,
@@ -182,7 +193,18 @@ const Activities: NextPage = () => {
             >
               <CircularProgress size={40} />
             </Box>
-          )}
+          )} */}
+          <TablePagination
+            component="div"
+            count={postsCount}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={(e): void => {
+              setPostsPerPage(Number(e.target.value));
+            }}
+            page={page}
+            rowsPerPage={10}
+            rowsPerPageOptions={[10, 20]}
+          />
         </Container>
       </Box>
     </>
