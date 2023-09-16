@@ -23,6 +23,8 @@ class ServerConfigImpl implements ServerConfig {
 
   public jwtSecret: string;
 
+  public unsplashAccessKey: string;
+
   constructor() {
     this.env = process.env.NODE_ENV || 'local';
     this.webUrl = process.env.WEB_URL || '';
@@ -37,6 +39,7 @@ class ServerConfigImpl implements ServerConfig {
       return domainsArr.filter((domain) => domain !== '');
     })();
     this.jwtSecret = process.env.JWT_SECRET || '';
+    this.unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY || '';
   }
 }
 

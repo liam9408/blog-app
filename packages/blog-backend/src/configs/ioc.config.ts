@@ -10,6 +10,7 @@ import {
   AuthService,
   PostService,
   CategoryService,
+  UnsplashProvider,
 } from '../services';
 
 const container = new Container();
@@ -30,5 +31,9 @@ container.bind<PostService>(SERVICE_IDENTIFIER.POST_SERVICE).to(PostService);
 container
   .bind<CategoryService>(SERVICE_IDENTIFIER.CATEGORY_SERVICE)
   .to(CategoryService);
+
+container
+  .bind<UnsplashProvider>(SERVICE_IDENTIFIER.CATEGORY_SERVICE)
+  .to(UnsplashProvider);
 
 export default container;

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, MouseEvent } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import NextLink from 'next/link';
@@ -8,16 +8,16 @@ import {
   Box,
   Container,
   Typography,
-  CircularProgress,
   Button,
   TablePagination,
+  // CircularProgress,
 } from '@mui/material';
 
 import { AuthGuard } from 'src/components/organisms/AuthGuard';
 import { DashboardLayout } from 'src/layout/dashboard/vertical-layout';
 import { postApi } from 'src/api/posts-api';
 import { useMounted } from 'src/hooks/use-mounted';
-import { useScrollPosition } from 'src/hooks/use-scroll-position';
+// import { useScrollPosition } from 'src/hooks/use-scroll-position';
 import {
   BlogPostCard,
   BlogPostCardSkeleton,
@@ -33,9 +33,9 @@ const Activities: NextPage = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState<number>(0);
   const [postsCount, setPostsCount] = useState<number>(0);
-  const [fetchingMore, setFetchingMore] = useState(false);
   const [postsPerPage, setPostsPerPage] = useState<number>(10);
-  const [prevPosition, setPrevPosition] = useState(0);
+  // const [fetchingMore, setFetchingMore] = useState(false);
+  // const [prevPosition, setPrevPosition] = useState(0);
 
   const getPosts = useCallback(
     async (offset: number, category?: string) => {
@@ -63,11 +63,19 @@ const Activities: NextPage = () => {
   );
 
   const handlePageChange = (
-    event: MouseEvent<HTMLButtonElement> | null,
+    event: MouseEvent<HTMLButtonElement>,
     newPage: number
   ) => {
     setPage(newPage);
   };
+
+  useEffect(() => {
+    if (router.isReady) {
+      const queryCategory = category && encodeURIComponent(category[0]);
+      const offset = page === 0 ? page : page * postsPerPage;
+      getPosts(offset, queryCategory);
+    }
+  }, [router, postsPerPage, page]);
 
   // const handleFetchMore = useCallback(
   //   async (offset?: number) => {
@@ -92,14 +100,6 @@ const Activities: NextPage = () => {
   //   },
   //   [isMounted, router.query]
   // );
-
-  useEffect(() => {
-    if (router.isReady) {
-      const queryCategory = category && encodeURIComponent(category[0]);
-      const offset = page === 0 ? page : page * postsPerPage;
-      getPosts(offset, queryCategory);
-    }
-  }, [router, postsPerPage, page]);
 
   // const scrollPosition = useScrollPosition();
   // useEffect(() => {

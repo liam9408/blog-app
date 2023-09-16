@@ -7,6 +7,7 @@ export interface Post {
   title?: string;
   description?: string;
   content?: string;
+  cover?: string;
   categoryId?: number;
   status?: 'draft' | 'published';
   publishedAt: Date;

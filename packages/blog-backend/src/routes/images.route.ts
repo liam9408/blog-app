@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import { Route } from '../types/routes.type';
-import { CategoryController } from '../controllers';
+import { ImageController } from '../controllers';
 import authMiddleware from '../middlewares/auth.middleware';
 
 class CategoryRoute implements Route {
-  public path = '/api/categories';
+  public path = '/api/images';
 
   public router = Router();
 
-  public categoryController = new CategoryController();
+  public imageController = new ImageController();
 
   constructor() {
     this.initializeRoutes();
@@ -18,7 +18,7 @@ class CategoryRoute implements Route {
     this.router.get(
       `${this.path}`,
       authMiddleware,
-      this.categoryController.getAllCategories
+      this.imageController.getImages
     );
   }
 }

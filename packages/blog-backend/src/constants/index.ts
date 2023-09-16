@@ -4,6 +4,7 @@ const SERVICE_IDENTIFIER = {
   AUTH_SERVICE: Symbol('AuthService'),
   POST_SERVICE: Symbol('PostService'),
   CATEGORY_SERVICE: Symbol('CategoryService'),
+  UNSPLASH_PROVIDER: Symbol('UnsplashProvider'),
 };
 
 const DTO_VALIDATOR = {

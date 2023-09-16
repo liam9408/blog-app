@@ -18,6 +18,8 @@ class Post extends Model {
 
   public content: string;
 
+  public cover: string;
+
   public categoryId: number;
 
   public publishedAt: Date;
@@ -49,6 +51,9 @@ class Post extends Model {
         },
         content: {
           type: new DataTypes.TEXT(),
+        },
+        cover: {
+          type: new DataTypes.STRING(255),
         },
         status: {
           type: DataTypes.ENUM,
