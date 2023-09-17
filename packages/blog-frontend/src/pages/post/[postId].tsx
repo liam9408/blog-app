@@ -63,7 +63,6 @@ const PostDetails: NextPage = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          pt: 2,
           pb: 6,
           position: 'relative',
           overflowX: 'visible',

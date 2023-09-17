@@ -75,7 +75,7 @@ export const BlogPostDisplay: FC<BlogPostDisplayProps> = (props) => {
           mt: 3,
         }}
       >
-        <Avatar src={post.user.avatar} />
+        <Avatar src={''} />
         <Box sx={{ ml: 2 }}>
           <Typography variant="subtitle2">
             By {post.user.firstName + post.user.lastName} •{' '}
