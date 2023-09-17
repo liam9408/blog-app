@@ -67,7 +67,7 @@ export const SignUpForm: FC = () => {
       );
       setLoading(false);
     } catch (err) {
-      setError(err);
+      setError(err.params);
       setLoading(false);
     }
   };

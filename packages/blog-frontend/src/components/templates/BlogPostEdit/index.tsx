@@ -76,6 +76,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
   const validationSchema = Yup.object().shape({
     title: Yup.string()
       .default(post?.title || '')
+      .min(10, 'Each post must have a title')
       .max(255)
       .required('Title must not be blank'),
     description: Yup.string()
@@ -89,6 +90,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
       .required('Category cannot be blank'),
     content: Yup.string()
       .default(post?.content || '')
+      .min(1, 'Content must not be blank')
       .required('Content must not be blank'),
     status: Yup.string().default(post?.status || 'draft'),
   });
@@ -308,8 +310,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
                     sx={{ mt: 1 }}
                     variant="subtitle1"
                   >
-                    Image used for the blog post cover and also for Open Graph
-                    meta
+                    Image used for the blog post cover
                   </Typography>
                 </Box>
               </>
