@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-
+import { toast } from 'react-hot-toast';
 import { Box, Container, Typography, CircularProgress } from '@mui/material';
 
 import { ToggleActivities } from 'src/components/molecules/ToggleActivities';
@@ -16,7 +16,7 @@ import {
   UserBlogPostCard,
   UserBlogPostCardSkeleton,
 } from 'src/components/organisms/UserBlogPostCard';
-import { toast } from 'react-hot-toast';
+import { wait } from 'src/utils/wait';
 
 const Me: NextPage = () => {
   const isMounted = useMounted();
@@ -60,23 +60,22 @@ const Me: NextPage = () => {
   const handleFetchMore = useCallback(
     async (offset?: number) => {
       try {
-        setTimeout(async () => {
-          const query = {
-            limit: 10,
-            offset: offset,
-            category: category && category[0],
-          };
+        await wait(1500);
+        const query = {
+          limit: 10,
+          offset: offset,
+          category: category && category[0],
+        };
 
-          const resp = await postApi.getPosts(query);
-          if (resp.success) {
-            if (resp.data.rows.length === 0) {
-              setIsEnd(true);
-            } else {
-              setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
-            }
-            setFetchingMore(false);
+        const resp = await postApi.getPosts(query);
+        if (resp.success) {
+          if (resp.data.rows.length === 0) {
+            setIsEnd(true);
+          } else {
+            setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
           }
-        }, 2000);
+          setFetchingMore(false);
+        }
       } catch (err) {
         toast.error(err.params);
         console.error(err);

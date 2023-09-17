@@ -4,6 +4,7 @@ import { apiService } from '../services/api.service';
 import { generateQuery } from '../utils/generate-query';
 
 interface GetPostsQuery {
+  title?: string;
   category?: string;
   offset: number;
   limit: number;

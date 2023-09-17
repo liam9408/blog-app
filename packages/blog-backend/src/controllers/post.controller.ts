@@ -49,6 +49,7 @@ class PostController {
       const searchParams: WhereOptions = { status: POSTS.status.PUBLISHED };
 
       for (const [searchByKey, searchByValue] of Object.entries(searchValues)) {
+        // eslint-disable-next-line default-case
         switch (searchByKey) {
           case 'id':
             searchParams.id = String(searchByValue)
@@ -56,7 +57,7 @@ class PostController {
               .map((val) => Number(val));
             break;
           case 'title':
-            searchParams.description = {
+            searchParams.title = {
               [Op.iLike]: `%${searchByValue}%`,
             };
             break;
@@ -66,6 +67,7 @@ class PostController {
             };
             break;
           case 'category':
+            // eslint-disable-next-line no-case-declarations
             const category = await this.categoryService.getCategoryByName(
               String(searchByValue)
             );

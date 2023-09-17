@@ -11,10 +11,11 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import type { AppBarProps } from '@mui/material';
-
 import { Menu as MenuIcon } from 'src/icons/menu';
 import { UserCircle as UserCircleIcon } from 'src/icons/user-circle';
-import { AccountPopover } from '../../../../components/organisms/AccountPopover';
+import { AccountPopover } from 'src/components/organisms/AccountPopover';
+import { useAuth } from 'src/hooks/use-auth';
+import { ContentSearchButton } from 'src/components/organisms/ContentSearch';
 
 interface VerticalNavbarProps extends AppBarProps {
   onOpenSidebar?: () => void;
@@ -36,41 +37,10 @@ const VerticalNavbarRoot = styled(AppBar)(({ theme }) => ({
       }),
 }));
 
-// const ContentSearchButton = () => {
-//   const [openDialog, setOpenDialog] = useState<boolean>(false);
-
-//   const handleOpenSearchDialog = (): void => {
-//     setOpenDialog(true);
-//   };
-
-//   const handleCloseSearchDialog = (): void => {
-//     setOpenDialog(false);
-//   };
-
-//   return (
-//     <>
-//       <Tooltip title="Search">
-//         <IconButton onClick={handleOpenSearchDialog} sx={{ ml: 1 }}>
-//           <SearchIcon fontSize="small" />
-//         </IconButton>
-//       </Tooltip>
-//       <ContentSearchDialog
-//         onClose={handleCloseSearchDialog}
-//         open={openDialog}
-//       />
-//     </>
-//   );
-// };
-
 const AccountButton = () => {
   const anchorRef = useRef<HTMLButtonElement | null>(null);
   const [openPopover, setOpenPopover] = useState<boolean>(false);
-  // To get the user from the authContext, you can use
-  // `const { user } = useAuth();`
-  const user = {
-    avatar: '/static/mock-images/avatars/avatar-anika_visser.png',
-    name: 'Anika Visser',
-  };
+  const { user } = useAuth();
 
   const handleOpenPopover = (): void => {
     setOpenPopover(true);
@@ -111,53 +81,6 @@ const AccountButton = () => {
   );
 };
 
-// const NotificationButton = () => {
-//   const isMounted = useMounted();
-//   const router = useRouter();
-//   const anchorRef = useRef<HTMLButtonElement | null>(null);
-//   const [openPopover, setOpenPopover] = useState<boolean>(false);
-//   const [notifications, setNotifications] = useState<Notification[]>([]);
-//   const [notificationsCount, setNotificationsCount] = useState<number>(null);
-//   const [unReadNotificationsCount, setUnReadNotificationsCount] =
-//     useState<number>(null);
-//   const [pageCount, setPageCount] = useState<number>(10);
-//   const [fetching, setFetching] = useState(false);
-
-//   const handleOpenPopover = (): void => {
-//     setOpenPopover(true);
-//   };
-
-//   const handleClosePopover = (): void => {
-//     setOpenPopover(false);
-//   };
-
-//   return (
-//     <>
-//       <Tooltip title="Notifications">
-//         <IconButton
-//           onClick={handleOpenPopover}
-//           sx={{
-//             ml: 1,
-//             backgroundColor: openPopover && 'rgba(218, 100, 60, 0.1)',
-//             height: '36px',
-//             width: '36px',
-//           }}
-//           ref={anchorRef}
-//           color="primary"
-//         >
-//           {openPopover ? (
-//             <NotificationsIcon color={'primary'} />
-//           ) : (
-//             <Badge badgeContent={unReadNotificationsCount} color="error">
-//               <NotificationsIcon color={'action'} />
-//             </Badge>
-//           )}
-//         </IconButton>
-//       </Tooltip>
-//     </>
-//   );
-// };
-
 export const VerticalNavbar: FC<VerticalNavbarProps> = (props) => {
   const { onOpenSidebar, open, ...other } = props;
 
@@ -197,7 +120,8 @@ export const VerticalNavbar: FC<VerticalNavbarProps> = (props) => {
             </IconButton>
           )}
           <Box sx={{ flexGrow: 1 }} />
-          {/* <NotificationButton /> */}
+          <ContentSearchButton />
+          <Box sx={{ flexGrow: 1 }} />
           <AccountButton />
         </Toolbar>
       </VerticalNavbarRoot>
