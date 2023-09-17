@@ -1,45 +1,38 @@
-// import { useEffect } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import NextLink from 'next/link';
+import { Box, Container } from '@mui/material';
+import { AuthGuard } from 'src/components/organisms/AuthGuard';
+import { DashboardLayout } from 'src/layout/dashboard/vertical-layout';
+import { BlogPostEdit } from 'src/components/templates/BlogPostEdit';
 
-import { Box, Card, Container, Divider, Link, Typography } from '@mui/material';
-
-import { AuthGuard } from '@/components/organisms/AuthGuard';
-
-const Home: NextPage = () => {
+const PostDetails: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Home</title>
+        <title>New Post</title>
       </Head>
       <Box
         component="main"
         sx={{
-          backgroundColor: 'background.default',
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
+          flexGrow: 1,
+          pt: 2,
+          pb: 6,
+          position: 'relative',
+          overflowX: 'visible',
         }}
       >
-        <Container
-          maxWidth="sm"
-          sx={{
-            py: {
-              xs: '60px',
-              md: '120px',
-            },
-          }}
-        >
-          <Card elevation={16} sx={{ p: 4 }}>
-            <h1> LOGGED IN !</h1>
-          </Card>
+        <Container maxWidth="md">
+          <BlogPostEdit type="create" header="New Post" />
         </Container>
       </Box>
     </>
   );
 };
 
-Home.getLayout = (page) => <AuthGuard>{page}</AuthGuard>;
+PostDetails.getLayout = (page) => (
+  <AuthGuard>
+    <DashboardLayout>{page}</DashboardLayout>
+  </AuthGuard>
+);
 
-export default Home;
+export default PostDetails;

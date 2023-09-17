@@ -9,14 +9,14 @@ import {
   Container,
   Typography,
   Button,
-  TablePagination,
+  CircularProgress,
 } from '@mui/material';
 
 import { AuthGuard } from 'src/components/organisms/AuthGuard';
 import { DashboardLayout } from 'src/layout/dashboard/vertical-layout';
-import { PostListLayout } from 'src/layout/post-list';
 import { postApi } from 'src/api/posts-api';
 import { useMounted } from 'src/hooks/use-mounted';
+import { useScrollPosition } from 'src/hooks/use-scroll-position';
 import {
   BlogPostCard,
   BlogPostCardSkeleton,
@@ -31,48 +31,75 @@ const Activities: NextPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState<number>(0);
-  const [postsCount, setPostsCount] = useState<number>(0);
-  const [postsPerPage, setPostsPerPage] = useState<number>(10);
+  const [fetchingMore, setFetchingMore] = useState(false);
+  const [prevPosition, setPrevPosition] = useState(0);
 
-  const getPosts = useCallback(
-    async (offset: number, category?: string) => {
-      try {
-        setLoading(true);
-        const query = {
-          limit: postsPerPage,
-          offset,
-          category,
-        };
-        setTimeout(async () => {
-          const resp = await postApi.getPosts(query);
-          if (resp.success) {
-            setPosts([...resp.data.rows]);
-            setPostsCount(resp.data.count);
-            setLoading(false);
-          }
-        }, 1000);
-      } catch (err) {
-        console.error(err);
+  const getPosts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const query = {
+        limit: 10,
+        offset: page,
+      };
+      const resp = await postApi.getPosts(query);
+      if (resp.success) {
+        setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
         setLoading(false);
       }
-    },
-    [isMounted]
-  );
-
-  const handlePageChange = (
-    event: MouseEvent<HTMLButtonElement>,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  }, [isMounted]);
 
   useEffect(() => {
     if (router.isReady) {
-      const queryCategory = category && encodeURIComponent(category[0]);
-      const offset = page === 0 ? page : page * postsPerPage;
-      getPosts(offset, queryCategory);
+      getPosts();
     }
-  }, [router, postsPerPage, page]);
+  }, [router]);
+
+  const handleFetchMore = useCallback(
+    async (offset?: number) => {
+      try {
+        setTimeout(async () => {
+          const query = {
+            limit: 10,
+            offset: offset,
+            category: category && category[0],
+          };
+
+          const resp = await postApi.getPosts(query);
+          if (resp.success) {
+            setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
+            setFetchingMore(false);
+          }
+        }, 2000);
+      } catch (err) {
+        console.error(err);
+        setFetchingMore(false);
+      }
+    },
+    [isMounted, router.query]
+  );
+
+  const scrollPosition = useScrollPosition();
+  useEffect(() => {
+    if (scrollPosition > prevPosition) {
+      const currentPositionRoudned = Math.round(scrollPosition);
+      if (
+        currentPositionRoudned >= 95 &&
+        currentPositionRoudned <= 98 &&
+        !fetchingMore
+      ) {
+        const newPage = page + 1;
+        setPage(newPage);
+
+        handleFetchMore(newPage * 10);
+        setPrevPosition(scrollPosition);
+        setFetchingMore(true);
+      }
+    }
+  }, [scrollPosition]);
 
   return (
     <>
@@ -136,17 +163,18 @@ const Activities: NextPage = () => {
                 />
               );
             })}
-          <TablePagination
-            component="div"
-            count={postsCount}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={(e): void => {
-              setPostsPerPage(Number(e.target.value));
-            }}
-            page={page}
-            rowsPerPage={10}
-            rowsPerPageOptions={[10, 20]}
-          />
+          {fetchingMore && (
+            <Box
+              sx={{
+                my: 5,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}
+            >
+              <CircularProgress size={40} />
+            </Box>
+          )}
         </Container>
       </Box>
     </>

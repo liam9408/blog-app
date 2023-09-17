@@ -1,14 +1,19 @@
-import { useState, FC } from 'react';
+import { useState, FC, useCallback, useEffect } from 'react';
 import NextLink from 'next/link';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
   Box,
   Button,
   Card,
   CardContent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from '@mui/material';
@@ -16,20 +21,28 @@ import {
 import { QuillEditor } from 'src/components/organisms/QuillEditor';
 import { Post } from 'src/types/posts.type';
 import { postApi } from 'src/api/posts-api';
+import { categoriesApi } from 'src/api/category-api';
 import { ImagePicker } from 'src/components/organisms/ImagePicker';
+import { Category } from 'src/types/category.type';
+import { useMounted } from 'src/hooks/use-mounted';
 
 interface BlogPostEditProps {
-  post: Post;
+  post?: Post;
   header?: string;
+  type: 'create' | 'edit';
 }
 
 export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
-  const { post, header } = props;
+  const { post, header, type = 'edit' } = props;
+
+  const isMounted = useMounted();
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [postContent, setPostContent] = useState(post.content);
+  const [postContent, setPostContent] = useState(post?.content);
   const [openImagePicker, setOpenImagePicker] = useState(false);
-  const [cover, setCover] = useState(post.cover);
+  const [cover, setCover] = useState(post?.cover);
+  const [categories, setCategories] = useState([]);
 
   const handleOpenImagePicker = () => {
     setOpenImagePicker(true);
@@ -39,21 +52,44 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
     setOpenImagePicker(false);
   };
 
+  const getCategories = useCallback(async () => {
+    try {
+      const resp = await categoriesApi.getCategories();
+      if (resp.success) {
+        setCategories(
+          resp.data.map((category: Category) => ({
+            id: category.id,
+            name: category.name,
+          }))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [isMounted]);
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
   const validationSchema = Yup.object().shape({
     title: Yup.string()
-      .default(post.title || '')
+      .default(post?.title || '')
       .max(255)
       .required('Title must not be blank'),
     description: Yup.string()
-      .default(post.description || '')
+      .default(post?.description || '')
       .required('Description must not be blank'),
     cover: Yup.string()
-      .default(post.cover || '')
+      .default(post?.cover || '')
       .required('You must select an image'),
+    categoryId: Yup.number()
+      .default(post?.categoryId || null)
+      .required('Category cannot be blank'),
     content: Yup.string()
-      .default(post.content || '')
+      .default(post?.content || '')
       .required('Content must not be blank'),
-    status: Yup.string().default(post.status || 'draft'),
+    status: Yup.string().default(post?.status || 'draft'),
   });
 
   const form = useForm({
@@ -76,14 +112,22 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
         description: values.description,
         cover: values.cover,
         status: values.status,
+        categoryId: values.categoryId,
         content: postContent,
       };
-      const resp = await postApi.editPost(post.id, newPostData);
-      if (resp.success) {
-        window.location.reload();
-      }
 
-      setLoading(false);
+      if (type === 'create') {
+        const resp = await postApi.createPost(newPostData);
+        if (resp.success) {
+          router.push(`/post/${resp.data.id}`);
+        }
+      }
+      if (type === 'edit') {
+        const resp = await postApi.editPost(post.id, newPostData);
+        if (resp.success) {
+          window.location.reload();
+        }
+      }
     } catch (err) {
       setLoading(false);
     }
@@ -132,6 +176,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
             <LoadingButton
               loading={loading}
               type="submit"
+              onClick={() => onSubmit({ ...getValues(), status: 'draft' })}
               sx={{
                 display: 'inline-flex',
                 mr: 2,
@@ -140,7 +185,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
             >
               Save
             </LoadingButton>
-            {!post.publishedAt && (
+            {!post?.publishedAt && (
               <LoadingButton
                 loading={loading}
                 onClick={() =>
@@ -181,6 +226,28 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
                   name="description"
                   type="text"
                 />
+              </Box>
+              <Box sx={{ mt: 3 }}>
+                <FormControl sx={{ width: '100%' }}>
+                  <InputLabel id="demo-simple-select-label">
+                    Category
+                  </InputLabel>
+                  <Select
+                    {...register('categoryId')}
+                    fullWidth
+                    id="demo-simple-select"
+                    labelId="demo-simple-select-label"
+                    error={!!errors.categoryId}
+                    label="Category"
+                    name="categoryId"
+                  >
+                    {categories.map((category) => (
+                      <MenuItem key={category.name} value={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
             </Box>
           </CardContent>
@@ -243,29 +310,6 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
                     meta
                   </Typography>
                 </Box>
-
-                {/* <FormControl sx={{ width: '100%', maxWidth: '900px', mt: 2 }}>
-                  <InputLabel id="demo-simple-select-label">
-                    Select a cover image
-                  </InputLabel>
-                  <Select
-                    id="demo-simple-select"
-                    labelId="demo-simple-select-label"
-                    label="Select a cover image"
-                    sx={{ width: '100%' }}
-                    onChange={handleImageChange}
-                  >
-                    <Box sx={{ height: 650, overflowY: 'scroll' }}>
-                      <ImageList variant="masonry" cols={3} gap={8}>
-                        {images.map((img: SelectProps) => (
-                          <MenuItem key={img.key} value={img.val}>
-                            <ImageRow image={img} />
-                          </MenuItem>
-                        ))}
-                      </ImageList>
-                    </Box>
-                  </Select>
-                </FormControl> */}
               </>
             )}
           </CardContent>
