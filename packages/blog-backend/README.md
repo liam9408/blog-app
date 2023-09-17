@@ -43,7 +43,9 @@ $ sequelize db:seed:all  # Applying seed data
 
 ## Quick Start
 
-Make sure you have completed the environment setup
+Make sure you have completed the environment setup.
+
+Currently there is a error from reflect-metadata during `npm build` but the application can be ran nonetheless.
 
 ```sh
 $ npm install
