@@ -13,8 +13,6 @@ class User extends Model {
 
   public password: string;
 
-  public avatar: string;
-
   public readonly createdAt!: Date;
 
   public readonly updatedAt!: Date;
@@ -39,9 +37,6 @@ class User extends Model {
           type: new DataTypes.STRING(255),
         },
         password: {
-          type: new DataTypes.STRING(255),
-        },
-        avatar: {
           type: new DataTypes.STRING(255),
         },
       },

@@ -6,7 +6,6 @@ export interface User {
   firstName?: string;
   lastName?: string;
   password?: string;
-  avatar?: string;
   createdAt?: Date;
   updatedAt?: Date;
   posts?: Post[];
