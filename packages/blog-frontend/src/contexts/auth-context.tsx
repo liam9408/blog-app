@@ -14,7 +14,12 @@ interface State {
 export interface AuthContextValue extends State {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  register: (email: string, name: string, password: string) => Promise<void>;
+  register: (
+    email: string,
+    firstName: string,
+    lastName: string,
+    password: string
+  ) => Promise<void>;
   reAuth: (token?: string) => Promise<void>;
 }
 
@@ -176,8 +181,18 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     });
   };
 
-  const register = async (email: string, password: string): Promise<void> => {
-    const user = await authApi.register({ email, password });
+  const register = async (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ): Promise<void> => {
+    const user = await authApi.register({
+      email,
+      password,
+      firstName,
+      lastName,
+    });
 
     dispatch({
       type: ActionType.REGISTER,

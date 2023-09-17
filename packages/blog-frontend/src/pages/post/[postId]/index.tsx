@@ -45,7 +45,7 @@ const PostDetails: NextPage = () => {
   }, []);
 
   const onToggleEdit = () => {
-    isEditing(true);
+    isEditing(!editing);
   };
 
   if (loading) {
@@ -69,7 +69,11 @@ const PostDetails: NextPage = () => {
       >
         <Container maxWidth="md">
           {editing ? (
-            <BlogPostEdit post={post} header="Edit Post" />
+            <BlogPostEdit
+              post={post}
+              header="Edit Post"
+              handleCancelEdit={onToggleEdit}
+            />
           ) : (
             <BlogPostDisplay
               post={post}

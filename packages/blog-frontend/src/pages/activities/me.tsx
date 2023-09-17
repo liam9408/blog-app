@@ -25,6 +25,7 @@ const Me: NextPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState<number>(0);
+  const [isEnd, setIsEnd] = useState(false);
   const [fetchingMore, setFetchingMore] = useState(false);
   const [prevPosition, setPrevPosition] = useState(0);
 
@@ -65,7 +66,11 @@ const Me: NextPage = () => {
 
           const resp = await postApi.getPosts(query);
           if (resp.success) {
-            setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
+            if (resp.data.rows.length === 0) {
+              setIsEnd(true);
+            } else {
+              setPosts((prevPosts) => [...prevPosts, ...resp.data.rows]);
+            }
             setFetchingMore(false);
           }
         }, 2000);
@@ -83,8 +88,9 @@ const Me: NextPage = () => {
       const currentPositionRoudned = Math.round(scrollPosition);
       if (
         currentPositionRoudned >= 95 &&
-        currentPositionRoudned <= 98 &&
-        !fetchingMore
+        currentPositionRoudned <= 100 &&
+        !fetchingMore &&
+        !isEnd
       ) {
         const newPage = page + 1;
         setPage(newPage);
@@ -168,6 +174,20 @@ const Me: NextPage = () => {
               }}
             >
               <CircularProgress size={40} />
+            </Box>
+          )}
+          {isEnd && (
+            <Box
+              sx={{
+                py: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'neutral.400',
+                fontWeight: 300,
+              }}
+            >
+              <Typography variant="h6">There are no more posts</Typography>
             </Box>
           )}
         </Container>

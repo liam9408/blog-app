@@ -29,11 +29,12 @@ import { useMounted } from 'src/hooks/use-mounted';
 interface BlogPostEditProps {
   post?: Post;
   header?: string;
-  type: 'create' | 'edit';
+  type?: 'create' | 'edit';
+  handleCancelEdit: () => void;
 }
 
 export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
-  const { post, header, type = 'edit' } = props;
+  const { post, header, type = 'edit', handleCancelEdit } = props;
 
   const isMounted = useMounted();
   const router = useRouter();
@@ -103,6 +104,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
   const { errors } = formState;
 
   const coverVal = getValues('cover');
+  const categoryId = getValues('categoryId');
 
   const onSubmit = async (values: Post): Promise<void> => {
     try {
@@ -159,18 +161,17 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
           }}
         >
           <div>
-            <NextLink href="/posts" passHref>
-              <Button
-                component="a"
-                sx={{
-                  display: 'inline-flex',
-                  mr: 2,
-                }}
-                variant="text"
-              >
-                Cancel
-              </Button>
-            </NextLink>
+            <Button
+              onClick={handleCancelEdit}
+              component="a"
+              sx={{
+                display: 'inline-flex',
+                mr: 2,
+              }}
+              variant="text"
+            >
+              Cancel
+            </Button>
           </div>
           <div>
             <LoadingButton
@@ -240,6 +241,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
                     error={!!errors.categoryId}
                     label="Category"
                     name="categoryId"
+                    defaultValue={categoryId}
                   >
                     {categories.map((category) => (
                       <MenuItem key={category.name} value={category.id}>
