@@ -5,7 +5,13 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 
-import { Box, Container, Typography, TablePagination } from '@mui/material';
+import {
+  Box,
+  Container,
+  Typography,
+  TablePagination,
+  Divider,
+} from '@mui/material';
 
 import { AuthGuard } from 'src/components/organisms/AuthGuard';
 import { DashboardLayout } from 'src/layout/dashboard/vertical-layout';
@@ -92,6 +98,17 @@ const Activities: NextPage = () => {
           }}
         >
           <ToggleActivities />
+          <Typography variant="h4" sx={{ mb: 1 }}>
+            Recent Articles
+          </Typography>
+          <Typography color="textSecondary" variant="subtitle1">
+            Discover the latest news, tips and user research insights from Acme.
+          </Typography>
+          <Typography color="textSecondary" variant="subtitle1">
+            You will learn about web infrastructure, design systems and devops
+            APIs best practices.
+          </Typography>
+          <Divider sx={{ my: 3 }} />
           {loading && (
             <>
               <BlogPostCardSkeleton />
