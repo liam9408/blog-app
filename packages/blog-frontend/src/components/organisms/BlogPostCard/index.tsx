@@ -78,11 +78,11 @@ export const BlogPostCard: FC<BlogPostCardProps> = (props) => {
       }}
       {...other}
     >
-      {/* <NextLink href={`/posts/${id}`} target="_blank" passHref>
+      <NextLink href={`/posts/${id}`} target="_blank" passHref>
         <Link color="textPrimary" component="a" target="_blank" variant="h5">
           <CardMedia component="a" image={cover} sx={{ height: 280 }} />
         </Link>
-      </NextLink> */}
+      </NextLink>
       <CardContent>
         <Box
           sx={{
@@ -106,20 +106,6 @@ export const BlogPostCard: FC<BlogPostCardProps> = (props) => {
             <Chip label={category} />
           </Box>
         </Box>
-        <Typography
-          color="textSecondary"
-          sx={{
-            height: 48,
-            mt: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: 2,
-          }}
-          variant="body1"
-        >
-          {shortDescription}
-        </Typography>
         <Typography
           color="textSecondary"
           sx={{

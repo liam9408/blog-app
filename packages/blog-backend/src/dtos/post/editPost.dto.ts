@@ -11,6 +11,9 @@ export class EditPostDto {
   public content: string;
 
   @IsString()
+  public cover: string;
+
+  @IsString()
   public status: string;
 
   @IsNumber()

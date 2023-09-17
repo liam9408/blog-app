@@ -1,4 +1,4 @@
-import { useState, FC, useEffect, ChangeEvent } from 'react';
+import { useState, FC } from 'react';
 import NextLink from 'next/link';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -9,56 +9,35 @@ import {
   Button,
   Card,
   CardContent,
-  ImageListItem,
-  MenuItem,
-  ImageList,
-  Select,
   TextField,
   Typography,
-  InputLabel,
-  FormControl,
-  SelectChangeEvent,
 } from '@mui/material';
 
 import { QuillEditor } from 'src/components/organisms/QuillEditor';
 import { Post } from 'src/types/posts.type';
 import { postApi } from 'src/api/posts-api';
-import { imagesApi } from 'src/api/image-api';
-import { Image } from 'src/types/image.type';
+import { ImagePicker } from 'src/components/organisms/ImagePicker';
 
 interface BlogPostEditProps {
   post: Post;
   header?: string;
 }
 
-interface SelectProps {
-  key: string;
-  val: string;
-}
-
-interface ImageRowProps {
-  image: SelectProps;
-}
-
-const ImageRow = (props: ImageRowProps) => {
-  const { image } = props;
-  return (
-    <ImageListItem>
-      <img
-        src={`${image.key}?w=248&fit=crop&auto=format`}
-        srcSet={`${image.key}?w=248&fit=crop&auto=format&dpr=2 2x`}
-        loading="lazy"
-      ></img>
-    </ImageListItem>
-  );
-};
-
 export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
   const { post, header } = props;
 
   const [loading, setLoading] = useState(false);
   const [postContent, setPostContent] = useState(post.content);
-  const [images, setImages] = useState([]);
+  const [openImagePicker, setOpenImagePicker] = useState(false);
+  const [cover, setCover] = useState(post.cover);
+
+  const handleOpenImagePicker = () => {
+    setOpenImagePicker(true);
+  };
+
+  const handleCloseImagePicker = () => {
+    setOpenImagePicker(false);
+  };
 
   const validationSchema = Yup.object().shape({
     title: Yup.string()
@@ -83,17 +62,19 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
     resolver: yupResolver<any>(validationSchema),
   });
 
-  const { register, handleSubmit, getValues, formState, setValue } = form;
+  const { register, handleSubmit, getValues, formState, setValue, resetField } =
+    form;
   const { errors } = formState;
+
+  const coverVal = getValues('cover');
 
   const onSubmit = async (values: Post): Promise<void> => {
     try {
-      console.log(values);
-      return;
       setLoading(true);
       const newPostData = {
         title: values.title,
         description: values.description,
+        cover: values.cover,
         status: values.status,
         content: postContent,
       };
@@ -108,30 +89,11 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
     }
   };
 
-  const getImages = async () => {
-    try {
-      const resp = await imagesApi.getImages();
-      if (resp.success) {
-        setImages(
-          resp.data.map((img: Image) => ({
-            key: img.thumbnail,
-            val: img.image,
-          }))
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const handleImageChange = (img: string) => {
+    setCover(img);
+    setValue('cover', img);
+    handleCloseImagePicker();
   };
-
-  const handleImageChange = (e: SelectChangeEvent) => {
-    console.log(e);
-    setValue('cover', e.target.value);
-  };
-
-  useEffect(() => {
-    getImages();
-  }, []);
 
   return (
     <>
@@ -226,20 +188,63 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
         <Card sx={{ mt: 4 }}>
           <CardContent>
             <Typography variant="h6">Post cover</Typography>
-            {post.cover ? (
-              <Box
-                sx={{
-                  backgroundImage: `url(${post.cover})`,
-                  backgroundPosition: 'center',
-                  backgroundSize: 'cover',
-                  borderRadius: 1,
-                  height: 230,
-                  mt: 3,
-                }}
-              />
+            {cover ? (
+              <>
+                <Box
+                  sx={{
+                    backgroundImage: `url(${coverVal})`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    borderRadius: 1,
+                    height: 230,
+                    mt: 3,
+                  }}
+                />
+                <Button
+                  onClick={() => {
+                    setCover(null);
+                    resetField('cover');
+                  }}
+                  sx={{ mt: 3 }}
+                  disabled={!coverVal}
+                >
+                  Remove photo
+                </Button>
+              </>
             ) : (
               <>
-                <FormControl sx={{ width: '100%', maxWidth: '900px', mt: 2 }}>
+                <Box
+                  sx={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    border: 1,
+                    borderRadius: 1,
+                    borderStyle: 'dashed',
+                    borderColor: 'divider',
+                    height: 230,
+                    mt: 3,
+                    p: 3,
+                    cursor: 'pointer',
+                  }}
+                  onClick={handleOpenImagePicker}
+                >
+                  <Typography align="center" color="textSecondary" variant="h6">
+                    Select a cover image
+                  </Typography>
+                  <Typography
+                    align="center"
+                    color="textSecondary"
+                    sx={{ mt: 1 }}
+                    variant="subtitle1"
+                  >
+                    Image used for the blog post cover and also for Open Graph
+                    meta
+                  </Typography>
+                </Box>
+
+                {/* <FormControl sx={{ width: '100%', maxWidth: '900px', mt: 2 }}>
                   <InputLabel id="demo-simple-select-label">
                     Select a cover image
                   </InputLabel>
@@ -260,42 +265,12 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
                       </ImageList>
                     </Box>
                   </Select>
-                </FormControl>
-                <Box
-                  sx={{
-                    alignItems: 'center',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    border: 1,
-                    borderRadius: 1,
-                    borderStyle: 'dashed',
-                    borderColor: 'divider',
-                    height: 230,
-                    mt: 3,
-                    p: 3,
-                  }}
-                >
-                  <Typography align="center" color="textSecondary" variant="h6">
-                    Select a cover image
-                  </Typography>
-                  <Typography
-                    align="center"
-                    color="textSecondary"
-                    sx={{ mt: 1 }}
-                    variant="subtitle1"
-                  >
-                    Image used for the blog post cover and also for Open Graph
-                    meta
-                  </Typography>
-                </Box>
+                </FormControl> */}
               </>
             )}
-            <Button onClick={() => {}} sx={{ mt: 3 }} disabled={!post.cover}>
-              Remove photo
-            </Button>
           </CardContent>
         </Card>
+
         <Card sx={{ mt: 4 }}>
           <CardContent>
             <Typography variant="h6">Content</Typography>
@@ -311,6 +286,12 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
           </CardContent>
         </Card>
       </form>
+
+      <ImagePicker
+        open={openImagePicker}
+        handleClose={handleCloseImagePicker}
+        handleSelectImage={handleImageChange}
+      />
     </>
   );
 };

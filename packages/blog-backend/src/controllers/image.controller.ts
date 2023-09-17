@@ -27,7 +27,7 @@ class ImagesController {
       );
       const parsedImages = resp.map((imageObj) => ({
         thumbnail: imageObj.urls.small,
-        image: imageObj.urls.regular,
+        image: imageObj.urls.small,
       }));
       if (resp) {
         res.status(200).json({ success: true, data: parsedImages });

@@ -8,6 +8,9 @@ import { PostService, CategoryService } from '../services';
 import logger from '../utils/logger';
 import { RequestWithIdentity } from 'request.type';
 import { getPagination, getOrderOptions } from '../utils/sequelize';
+import enums from '../enums';
+
+const POSTS = enums.POSTS;
 
 @injectable()
 class PostController {
@@ -39,8 +42,6 @@ class PostController {
 
       const searchParams: WhereOptions = {};
 
-      console.log(searchValues);
-
       for (const [searchByKey, searchByValue] of Object.entries(searchValues)) {
         switch (searchByKey) {
           case 'id':
@@ -70,7 +71,7 @@ class PostController {
       }
 
       const query = {
-        where: { ...searchParams },
+        where: { ...searchParams, status: POSTS.status.PUBLISHED },
         ...getPagination(limit, offset),
         ...getOrderOptions([{ sortKey: sortBy, sortOrder: sort }]),
       };

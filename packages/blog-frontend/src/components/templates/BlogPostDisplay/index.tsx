@@ -44,7 +44,7 @@ export const BlogPostDisplay: FC<BlogPostDisplayProps> = (props) => {
   const { post, isAuthor, onToggleEdit } = props;
   return (
     <>
-      <BackButton text="Back" to="/posts" />
+      <BackButton text="Back" to="/" />
       <Box sx={{ mt: 3 }}>
         <Chip label={post.category.name} />
       </Box>
@@ -93,6 +93,17 @@ export const BlogPostDisplay: FC<BlogPostDisplayProps> = (props) => {
           </Typography>
         </Box>
       </Box>
+
+      <Box
+        sx={{
+          backgroundImage: `url(${post.cover})`,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          borderRadius: 1,
+          height: 380,
+          mt: 3,
+        }}
+      />
 
       <Box sx={{ py: 3 }}>
         <TextDisplayWrapper>

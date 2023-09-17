@@ -174,7 +174,7 @@ const Activities: NextPage = () => {
                   authorAvatar=""
                   authorName={post.user.firstName + post.user.lastName}
                   category={post.category.name}
-                  cover=""
+                  cover={post.cover}
                   publishedAt={new Date(post.createdAt).getTime()}
                   readTime={'3 min'}
                   shortDescription={post.description}
