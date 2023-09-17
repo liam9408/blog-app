@@ -119,7 +119,7 @@ class AuthService {
         message: error.stack,
       });
 
-      throw new HttpException(500, 30001, 'Unable to authorize user');
+      throw new HttpException(500, 30001, error.params);
     }
   }
 
