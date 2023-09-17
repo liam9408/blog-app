@@ -15,7 +15,13 @@ interface ContentSearchProps {
 }
 
 export const ContentSearchDialog: FC<ContentSearchProps> = (props) => {
-  const { open, modalRef, results, showResults, loading, ...other } = props;
+  const { open, onClose, modalRef, results, showResults, loading, ...other } =
+    props;
+
+  const handleClick = (postId: number) => {
+    window.location.href = `/post/${postId}`;
+    onClose();
+  };
 
   return (
     <Card
@@ -97,7 +103,17 @@ export const ContentSearchDialog: FC<ContentSearchProps> = (props) => {
                 )}
                 {results.map((post) => (
                   <Fragment key={post.title}>
-                    <Box sx={{ p: 2, my: 0.5 }}>
+                    <Box
+                      onClick={() => handleClick(post.id)}
+                      sx={{
+                        px: 2,
+                        py: 1,
+                        my: 1,
+                        cursor: 'pointer',
+                        borderRadius: 1,
+                        '&:hover': { backgroundColor: 'neutral.100' },
+                      }}
+                    >
                       <Box
                         sx={{
                           alignItems: 'center',
@@ -117,15 +133,13 @@ export const ContentSearchDialog: FC<ContentSearchProps> = (props) => {
                       <Typography
                         color="textSecondary"
                         variant="body2"
-                        sx={{ mt: 1 }}
+                        sx={{ mt: 0.5 }}
                       >
-                        {post.description}
+                        {`By ${post.user.firstName} ${post.user.lastName}`}
                       </Typography>
                     </Box>
                   </Fragment>
                 ))}
-                {/* </Box> */}
-                {/* ))} */}
               </>
             )}
           </Box>
