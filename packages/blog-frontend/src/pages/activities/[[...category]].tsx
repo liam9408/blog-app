@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useCallback, MouseEvent } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
@@ -97,10 +98,10 @@ const Activities: NextPage = () => {
             </>
           )}
           {!loading &&
-            posts.map((post, i) => {
+            posts.map((post) => {
               return (
                 <BlogPostCard
-                  key={`post-${i}`}
+                  key={`post-${post.title}`}
                   id={post.id}
                   authorAvatar=""
                   authorName={post.user.firstName + post.user.lastName}

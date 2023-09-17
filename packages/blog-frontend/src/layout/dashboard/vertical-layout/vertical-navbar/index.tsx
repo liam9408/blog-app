@@ -16,13 +16,6 @@ import { Menu as MenuIcon } from 'src/icons/menu';
 import { UserCircle as UserCircleIcon } from 'src/icons/user-circle';
 import { AccountPopover } from '../../../../components/organisms/AccountPopover';
 
-type Language = 'en' | 'zh-TW';
-
-const languages: Record<Language, string> = {
-  en: '/static/icons/uk_flag.svg',
-  'zh-TW': '/static/icons/zh_flag.svg',
-};
-
 interface VerticalNavbarProps extends AppBarProps {
   onOpenSidebar?: () => void;
   open?: boolean;

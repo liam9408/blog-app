@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { FC, forwardRef, ReactElement, Ref, useEffect, useState } from 'react';
 import {
   Box,

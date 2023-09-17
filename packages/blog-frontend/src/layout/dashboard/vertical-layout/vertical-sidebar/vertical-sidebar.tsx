@@ -1,9 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState } from 'react';
 import type { FC } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Divider } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { useAuth } from '../../../../hooks/use-auth';
 import { Scrollbar } from '../../../../components/molecules/ScrollBar';
 import { DashboardSidebarItem } from './vertical-sidebar-item';
 import { useHover } from '../../../..//hooks/use-hover';
@@ -104,19 +104,20 @@ export const VerticalSidebarComponent: FC<VerticalSidebarComponentProps> = (
                 },
               }}
             />
-            {categories.map((category) => (
-              <DashboardSidebarItem
-                key={`category-${category.id}`}
-                item={category}
-                query={query}
-                sx={{
-                  mt: 2,
-                  '& + &': {
+            {!loading &&
+              categories.map((category) => (
+                <DashboardSidebarItem
+                  key={`category-${category.id}`}
+                  item={category}
+                  query={query}
+                  sx={{
                     mt: 2,
-                  },
-                }}
-              />
-            ))}
+                    '& + &': {
+                      mt: 2,
+                    },
+                  }}
+                />
+              ))}
           </Box>
           <Divider
             sx={{
