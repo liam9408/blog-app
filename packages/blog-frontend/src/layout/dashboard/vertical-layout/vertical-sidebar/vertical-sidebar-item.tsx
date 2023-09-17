@@ -30,6 +30,7 @@ export const DashboardSidebarItem: FC<DashboardSidebarItemProps> = (props) => {
       <NextLink href={item.path} passHref>
         <Button
           component="a"
+          size="large"
           startIcon={icon}
           disableRipple
           sx={{
