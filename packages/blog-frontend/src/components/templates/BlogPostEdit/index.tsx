@@ -1,4 +1,4 @@
-import { useState, FC } from 'react';
+import { useState, FC, useEffect, ChangeEvent } from 'react';
 import NextLink from 'next/link';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -9,25 +9,56 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
+  ImageListItem,
+  MenuItem,
+  ImageList,
+  Select,
   TextField,
   Typography,
+  InputLabel,
+  FormControl,
+  SelectChangeEvent,
 } from '@mui/material';
 
 import { QuillEditor } from 'src/components/organisms/QuillEditor';
 import { Post } from 'src/types/posts.type';
 import { postApi } from 'src/api/posts-api';
+import { imagesApi } from 'src/api/image-api';
+import { Image } from 'src/types/image.type';
 
 interface BlogPostEditProps {
   post: Post;
   header?: string;
 }
 
+interface SelectProps {
+  key: string;
+  val: string;
+}
+
+interface ImageRowProps {
+  image: SelectProps;
+}
+
+const ImageRow = (props: ImageRowProps) => {
+  const { image } = props;
+  return (
+    <ImageListItem>
+      <img
+        src={`${image.key}?w=248&fit=crop&auto=format`}
+        srcSet={`${image.key}?w=248&fit=crop&auto=format&dpr=2 2x`}
+        loading="lazy"
+      ></img>
+    </ImageListItem>
+  );
+};
+
 export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
   const { post, header } = props;
 
   const [loading, setLoading] = useState(false);
   const [postContent, setPostContent] = useState(post.content);
+  const [images, setImages] = useState([]);
 
   const validationSchema = Yup.object().shape({
     title: Yup.string()
@@ -37,6 +68,9 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
     description: Yup.string()
       .default(post.description || '')
       .required('Description must not be blank'),
+    cover: Yup.string()
+      .default(post.cover || '')
+      .required('You must select an image'),
     content: Yup.string()
       .default(post.content || '')
       .required('Content must not be blank'),
@@ -49,12 +83,13 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
     resolver: yupResolver<any>(validationSchema),
   });
 
-  const { register, handleSubmit, getValues, formState } = form;
+  const { register, handleSubmit, getValues, formState, setValue } = form;
   const { errors } = formState;
 
   const onSubmit = async (values: Post): Promise<void> => {
     try {
-      console.log(status);
+      console.log(values);
+      return;
       setLoading(true);
       const newPostData = {
         title: values.title,
@@ -72,6 +107,31 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
       setLoading(false);
     }
   };
+
+  const getImages = async () => {
+    try {
+      const resp = await imagesApi.getImages();
+      if (resp.success) {
+        setImages(
+          resp.data.map((img: Image) => ({
+            key: img.thumbnail,
+            val: img.image,
+          }))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleImageChange = (e: SelectChangeEvent) => {
+    console.log(e);
+    setValue('cover', e.target.value);
+  };
+
+  useEffect(() => {
+    getImages();
+  }, []);
 
   return (
     <>
@@ -166,56 +226,74 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
         <Card sx={{ mt: 4 }}>
           <CardContent>
             <Typography variant="h6">Post cover</Typography>
-            {/* {cover ? (
-            <Box
-              sx={{
-                backgroundImage: `url(${cover})`,
-                backgroundPosition: 'center',
-                backgroundSize: 'cover',
-                borderRadius: 1,
-                height: 230,
-                mt: 3,
-              }}
-            />
-          ) : (
-            <Box
-              sx={{
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                border: 1,
-                borderRadius: 1,
-                borderStyle: 'dashed',
-                borderColor: 'divider',
-                height: 230,
-                mt: 3,
-                p: 3,
-              }}
-            >
-              <Typography align="center" color="textSecondary" variant="h6">
-                Select a cover image
-              </Typography>
-              <Typography
-                align="center"
-                color="textSecondary"
-                sx={{ mt: 1 }}
-                variant="subtitle1"
-              >
-                Image used for the blog post cover and also for Open Graph meta
-              </Typography>
-            </Box>
-          )} */}
-            {/* <Button onClick={handleRemove} sx={{ mt: 3 }} disabled={!cover}>
-            Remove photo
-          </Button> */}
-            {/* <Box sx={{ mt: 3 }}>
-            <FileDropzone
-              accept="image/*"
-              maxFiles={1}
-              onDrop={handleDropCover}
-            />
-          </Box> */}
+            {post.cover ? (
+              <Box
+                sx={{
+                  backgroundImage: `url(${post.cover})`,
+                  backgroundPosition: 'center',
+                  backgroundSize: 'cover',
+                  borderRadius: 1,
+                  height: 230,
+                  mt: 3,
+                }}
+              />
+            ) : (
+              <>
+                <FormControl sx={{ width: '100%', maxWidth: '900px', mt: 2 }}>
+                  <InputLabel id="demo-simple-select-label">
+                    Select a cover image
+                  </InputLabel>
+                  <Select
+                    id="demo-simple-select"
+                    labelId="demo-simple-select-label"
+                    label="Select a cover image"
+                    sx={{ width: '100%' }}
+                    onChange={handleImageChange}
+                  >
+                    <Box sx={{ height: 650, overflowY: 'scroll' }}>
+                      <ImageList variant="masonry" cols={3} gap={8}>
+                        {images.map((img: SelectProps) => (
+                          <MenuItem key={img.key} value={img.val}>
+                            <ImageRow image={img} />
+                          </MenuItem>
+                        ))}
+                      </ImageList>
+                    </Box>
+                  </Select>
+                </FormControl>
+                <Box
+                  sx={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    border: 1,
+                    borderRadius: 1,
+                    borderStyle: 'dashed',
+                    borderColor: 'divider',
+                    height: 230,
+                    mt: 3,
+                    p: 3,
+                  }}
+                >
+                  <Typography align="center" color="textSecondary" variant="h6">
+                    Select a cover image
+                  </Typography>
+                  <Typography
+                    align="center"
+                    color="textSecondary"
+                    sx={{ mt: 1 }}
+                    variant="subtitle1"
+                  >
+                    Image used for the blog post cover and also for Open Graph
+                    meta
+                  </Typography>
+                </Box>
+              </>
+            )}
+            <Button onClick={() => {}} sx={{ mt: 3 }} disabled={!post.cover}>
+              Remove photo
+            </Button>
           </CardContent>
         </Card>
         <Card sx={{ mt: 4 }}>
@@ -226,23 +304,10 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
               value={postContent}
               onChange={setPostContent}
               sx={{
-                height: 330,
+                height: 550,
                 mt: 3,
               }}
             />
-          </CardContent>
-        </Card>
-        <Card sx={{ mt: 4 }}>
-          <CardContent>
-            <Grid container spacing={3}>
-              <Grid item xs={12} lg={4}>
-                <Typography variant="h6">Meta</Typography>
-              </Grid>
-              <Grid item xs={12} lg={8}>
-                <TextField fullWidth label="SEO title" name="title" />
-                <TextField fullWidth sx={{ mt: 3 }} label="SEO description" />
-              </Grid>
-            </Grid>
           </CardContent>
         </Card>
       </form>

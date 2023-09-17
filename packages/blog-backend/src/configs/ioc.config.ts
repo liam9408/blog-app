@@ -33,7 +33,7 @@ container
   .to(CategoryService);
 
 container
-  .bind<UnsplashProvider>(SERVICE_IDENTIFIER.CATEGORY_SERVICE)
+  .bind<UnsplashProvider>(SERVICE_IDENTIFIER.UNSPLASH_PROVIDER)
   .to(UnsplashProvider);
 
 export default container;

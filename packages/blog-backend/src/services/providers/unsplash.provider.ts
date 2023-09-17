@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { injectable } from 'inversify';
-import { FindOptions } from 'sequelize';
 
 import { SERVICE_IDENTIFIER } from '../../constants';
 import iocContainer from '../../configs/ioc.config';
@@ -29,17 +28,15 @@ class UnsplashProvider {
 
   public async getImages(query: string): Promise<any[]> {
     try {
-      const response = await axios.post(
-        `${this.apiUrl}/search/photos?query=${query}`,
-        {
-          headers: {
-            Authorization: `Client-ID ${this.unsplashAccessKey}`,
-          },
-        }
-      );
-      return response.data.urls;
+      const response = await axios.get(`${this.apiUrl}/photos`, {
+        headers: {
+          Authorization: `Client-ID ${this.unsplashAccessKey}`,
+        },
+      });
+
+      return response.data;
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data);
       logger.error({
         level: 'error',
         label: 'Unsplash Provider - getImages',

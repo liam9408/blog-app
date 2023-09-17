@@ -25,8 +25,12 @@ class ImagesController {
       const resp = await this.unsplashProvider.getImages(
         query && String(query)
       );
+      const parsedImages = resp.map((imageObj) => ({
+        thumbnail: imageObj.urls.small,
+        image: imageObj.urls.regular,
+      }));
       if (resp) {
-        res.status(200).json({ success: true, data: resp });
+        res.status(200).json({ success: true, data: parsedImages });
       }
     } catch (error) {
       logger.log({

@@ -8,7 +8,7 @@ module.exports = {
     return config;
   },
   images: {
-    // domains: ["storage.googleapis.com"],
+    domains: ['storage.googleapis.com', 'images.unsplash.com'],
   },
   publicRuntimeConfig: {
     API_URL: process.env.NEXT_PUBLIC_API_URL,
