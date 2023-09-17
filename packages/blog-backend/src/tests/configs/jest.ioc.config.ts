@@ -1,9 +1,16 @@
 /* IoC Container */
 import 'reflect-metadata';
+import { Sequelize } from 'sequelize';
 import { Container } from 'inversify';
 
 import { SERVICE_IDENTIFIER } from '../../constants';
 import ServerConfig from '../../configs/server.config';
+
+import {
+  sequelize,
+  initModels,
+  initAssociation,
+} from '../../db/models/index.model';
 
 import {
   DefaultService,
@@ -14,6 +21,12 @@ import {
 } from '../../services';
 
 const container = new Container();
+
+export const setupSequelize = async (): Promise<Sequelize> => {
+  await initModels(sequelize);
+  await initAssociation();
+  return sequelize;
+};
 
 container
   .bind<ServerConfig>(SERVICE_IDENTIFIER.SERVER_CONFIG)

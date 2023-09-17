@@ -2,7 +2,7 @@ import { User } from './user.type.js';
 import { Category } from './category.type.js';
 
 export interface Post {
-  id: number;
+  id?: number;
   userId?: number;
   title?: string;
   description?: string;
@@ -10,10 +10,10 @@ export interface Post {
   cover?: string;
   categoryId?: number;
   status?: 'draft' | 'published';
-  publishedAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  user: User;
-  category: Category;
+  publishedAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  user?: User;
+  category?: Category;
   readTimeMinutes?: number;
 }

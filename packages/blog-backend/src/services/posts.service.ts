@@ -68,8 +68,8 @@ class PostService {
     postId: number,
     options?: FindOptions
   ): Promise<Post> {
+    console.log({ postId });
     try {
-      console.log(typeof postId);
       const record = await this.postModel.findByPk(postId, {
         ...options,
         include: [
@@ -79,6 +79,7 @@ class PostService {
       });
       return record.toJSON();
     } catch (error) {
+      console.log(error);
       logger.error({
         level: 'error',
         label: 'Post Service - getPostById',

@@ -2,7 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   verbose: true,
-  roots: ['./src/tests'],
+  roots: ['./src'],
   reporters: ['default'],
   coveragePathIgnorePatterns: ['node_modules', 'tests/setups'],
   globalSetup: '<rootDir>/src/tests/setups/jest.setup.ts',

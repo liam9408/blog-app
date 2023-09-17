@@ -26,7 +26,7 @@ class UnsplashProvider {
     this.unsplashAccessKey = unsplashAccessKey;
   }
 
-  public async getImages(query: string): Promise<any[]> {
+  public async getImages(): Promise<any[]> {
     try {
       const response = await axios.get(`${this.apiUrl}/photos`, {
         headers: {

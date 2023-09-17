@@ -29,9 +29,7 @@ class AuthService {
     this.serverConfig = serverConfig;
   }
 
-  public async createToken(
-    dataStoredInToken: DataStoredInToken
-  ): Promise<TokenData> {
+  public createToken(dataStoredInToken: DataStoredInToken): TokenData {
     const { jwtSecret } = this.serverConfig;
     const expiresIn: number = 60 * 60 * 24;
     const token = jwt.sign(dataStoredInToken, jwtSecret, { expiresIn });
@@ -56,32 +54,32 @@ class AuthService {
     transaction?: Transaction
   ): Promise<{ cookie: string; user: User }> {
     try {
-      const newUser = await this.userModel.create(
+      const createResp = await this.userModel.create(
         { ...registrationData },
         {
           transaction,
         }
       );
 
-      const dataStoredInToken = { userId: newUser.id };
+      const user = omit(createResp.toJSON(), 'password');
+      const dataStoredInToken = { userId: user.id };
 
-      const tokenData = await this.createToken(dataStoredInToken);
+      const tokenData = this.createToken(dataStoredInToken);
       const cookie = AuthService.createCookie(tokenData);
-
-      const user = omit(newUser.toJSON(), 'password');
 
       return {
         cookie,
         user,
       };
     } catch (error) {
+      console.log(error);
       logger.error({
         level: 'error',
         label: 'Auth Service - register',
         message: error.stack,
       });
 
-      throw new HttpException(500, 30001, 'Unable to register user');
+      throw new HttpException(500, 30006, 'Unable to register user');
     }
   }
 

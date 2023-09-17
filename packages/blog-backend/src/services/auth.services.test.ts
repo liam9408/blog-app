@@ -5,10 +5,24 @@ import AuthService from './auth.service';
 import iocTestContainer from '../tests/configs/jest.ioc.config';
 import { User } from '../types/user.type';
 import UserModel from '../db/models/user.model';
+import { RegistrationData } from 'auth.type';
 
 const token = 'token';
-const expiresIn = 1200;
-const user = { id: 1, firstName: 'test', lastName: 'test' } as User;
+const expiresIn = 86400;
+const cookie = `Authorization=${token}; HttpOnly; Path=/; Max-Age=${expiresIn};`;
+const user = {
+  id: 1,
+  firstName: 'test',
+  lastName: 'test',
+  email: 'test@test.com',
+  password: 'test-password',
+} as User;
+const registrationData = {
+  firstName: 'test',
+  lastName: 'test',
+  email: 'test@test.com',
+  password: 'test-password',
+} as RegistrationData;
 const mockedDataStoredInToken = { userId: user.id };
 const mockedUserModel = UserModel as jest.Mocked<any>;
 
@@ -58,110 +72,110 @@ describe('Unit Test: Auth Service', () => {
         expiresIn,
       };
       const res = AuthService.createCookie(tokenData);
-      expect(res).toEqual(
-        `Authorization=${token}; HttpOnly; Path=/; Max-Age=${expiresIn};`
-      );
+      expect(res).toEqual(cookie);
     });
   });
 
-  //   describe('findIdentity', () => {
-  //     it('finds identity', async () => {
-  //       expect.assertions(3);
-  //       const modelInstanceMock = {
-  //         toJSON: jest.fn(() => {
-  //           return user;
-  //         }),
-  //       };
-  //       jest
-  //         .spyOn(mockedUserModel, 'findOne')
-  //         .mockResolvedValueOnce(modelInstanceMock);
-  //       const res = await authService.findIdentity(token);
-  //       expect(authService.identityModel.findOne).toHaveBeenCalledTimes(1);
-  //       expect(modelInstanceMock.toJSON).toBeCalledTimes(1);
-  //       expect(res).toMatchObject(identity);
-  //     });
-  //     it('cannot find identity', async () => {
-  //       expect.assertions(1);
-  //       jest.spyOn(mockedUserModel, 'findOne').mockImplementation(async () => {
-  //         throw new Error();
-  //       });
-  //       return authService
-  //         .findIdentity(token)
-  //         .catch((e) => expect(e).toEqual(expect.any(Error)));
-  //     });
-  //   });
+  describe('register', () => {
+    it('register', async () => {
+      expect.assertions(1);
+      jest
+        .spyOn(AuthService.prototype, 'register')
+        .mockImplementation(async () => {
+          return { cookie, user };
+        });
+      jest
+        .spyOn(AuthService.prototype, 'createToken')
+        .mockImplementation(() => {
+          return {
+            token,
+            expiresIn,
+          };
+        });
+      const mockedCreateCookie = jest.fn().mockReturnValue('cookie');
+      AuthService.createCookie = mockedCreateCookie;
+      const res = await authService.register(registrationData);
+      expect(res).toEqual({ cookie, user });
+    });
+    it('cannot register', async () => {
+      expect.assertions(1);
+      jest
+        .spyOn(AuthService.prototype, 'register')
+        .mockImplementation(async () => {
+          throw new Error();
+        });
+      return authService
+        .register(registrationData)
+        .catch((e) => expect(e).toEqual(expect.any(Error)));
+    });
+  });
 
-  //   describe('authorize', () => {
-  //     it('authorizes', async () => {
-  //       expect.assertions(2);
-  //       const params = { token };
-  //       jest
-  //         .spyOn(AuthService.prototype, 'findIdentity')
-  //         .mockImplementation(async () => {
-  //           return identity;
-  //         });
-  //       jest
-  //         .spyOn(AuthService.prototype, 'createJwtToken')
-  //         .mockImplementation(() => {
-  //           return {
-  //             token,
-  //             expiresIn,
-  //           };
-  //         });
-  //       const mockedCreateCookie = jest.fn().mockReturnValue('cookie');
-  //       AuthService.createCookie = mockedCreateCookie;
-  //       const res = await authService.authorize(params);
-  //       expect(authService.createJwtToken).toHaveBeenCalledTimes(1);
-  //       expect(res).toEqual({ cookie: 'cookie', identity });
-  //     });
-  //     it('cannot authorize identity', async () => {
-  //       expect.assertions(1);
-  //       const params = { token };
-  //       jest
-  //         .spyOn(AuthService.prototype, 'findIdentity')
-  //         .mockImplementation(async () => {
-  //           throw new Error();
-  //         });
-  //       return authService
-  //         .authorize(params)
-  //         .catch((e) => expect(e).toEqual(expect.any(Error)));
-  //     });
-  //   });
+  describe('authorize', () => {
+    it('authorizes', async () => {
+      expect.assertions(1);
+      jest
+        .spyOn(AuthService.prototype, 'authorize')
+        .mockImplementation(async () => {
+          return { cookie, user };
+        });
+      jest
+        .spyOn(AuthService.prototype, 'createToken')
+        .mockImplementation(() => {
+          return {
+            token,
+            expiresIn,
+          };
+        });
+      const mockedCreateCookie = jest.fn().mockReturnValue('cookie');
+      AuthService.createCookie = mockedCreateCookie;
+      const res = await authService.authorize(user.email, user.password);
+      expect(res).toEqual({ cookie, user });
+    });
+    it('cannot authorize', async () => {
+      expect.assertions(1);
+      jest
+        .spyOn(AuthService.prototype, 'authorize')
+        .mockImplementation(async () => {
+          throw new Error();
+        });
+      return authService
+        .authorize(user.email, user.password)
+        .catch((e) => expect(e).toEqual(expect.any(Error)));
+    });
+  });
 
-  //   describe('reAuthorize', () => {
-  //     it('authorizes', async () => {
-  //       expect.assertions(2);
-  //       const params = { token };
-  //       jest
-  //         .spyOn(AuthService.prototype, 'findIdentity')
-  //         .mockImplementation(async () => {
-  //           return identity;
-  //         });
-  //       jest
-  //         .spyOn(AuthService.prototype, 'createJwtToken')
-  //         .mockImplementation(() => {
-  //           return {
-  //             token,
-  //             expiresIn,
-  //           };
-  //         });
-  //       const mockedCreateCookie = jest.fn().mockReturnValue('cookie');
-  //       AuthService.createCookie = mockedCreateCookie;
-  //       const res = await authService.reAuthorize(params);
-  //       expect(authService.createJwtToken).not.toHaveBeenCalled();
-  //       expect(res).toEqual({ identity });
-  //     });
-  //     it('cannot authorize identity', async () => {
-  //       expect.assertions(1);
-  //       const params = { token };
-  //       jest
-  //         .spyOn(AuthService.prototype, 'findIdentity')
-  //         .mockImplementation(async () => {
-  //           throw new Error();
-  //         });
-  //       return authService
-  //         .reAuthorize(params)
-  //         .catch((e) => expect(e).toEqual(expect.any(Error)));
-  //     });
-  //   });
+  describe('reAuthorize', () => {
+    it('authorizes', async () => {
+      expect.assertions(2);
+      jest
+        .spyOn(AuthService.prototype, 'reAuthorize')
+        .mockImplementation(async () => {
+          return { cookie, user };
+        });
+      jest
+        .spyOn(AuthService.prototype, 'createToken')
+        .mockImplementation(() => {
+          return {
+            token,
+            expiresIn,
+          };
+        });
+      const mockedCreateCookie = jest.fn().mockReturnValue('cookie');
+      AuthService.createCookie = mockedCreateCookie;
+      const res = await authService.reAuthorize(user.id);
+      expect(authService.createToken).not.toHaveBeenCalled();
+      expect(res).toEqual({ cookie, user });
+    });
+    it('cannot reAuthorize', async () => {
+      expect.assertions(1);
+      jest
+        .spyOn(AuthService.prototype, 'reAuthorize')
+        .mockImplementation(async () => {
+          throw new Error();
+        });
+      return authService
+        .reAuthorize(user.id)
+        .catch((e) => expect(e).toEqual(expect.any(Error)));
+    });
+  });
 });
