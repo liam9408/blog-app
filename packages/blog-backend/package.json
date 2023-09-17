@@ -14,7 +14,7 @@
     "build-docker": "npm run build && docker-compose build",
     "build-ts": "tsc",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --forceExit --coverage --verbose --detectOpenHandles",
     "watch": "NODE_ENV=local concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\"  \"npm run watch-ts\" \"npm run watch-node\"",
     "watch-windows": "set NODE_ENV=local& concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
     "watch-docker": "docker-compose up",
@@ -34,6 +34,7 @@
     "@types/helmet": "^4.0.0",
     "@types/hpp": "^0.2.2",
     "@types/inversify": "^2.0.33",
+    "@types/jest": "^29.5.5",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/morgan": "^1.9.5",
     "@types/sequelize": "^4.28.15",
@@ -52,7 +53,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
-    "eslint-plugin-jest": "^27.2.3",
+    "eslint-plugin-jest": "^27.4.0",
     "eslint-plugin-prettier": "^5.0.0",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
@@ -68,6 +69,7 @@
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.33.0",
     "sequelize-cli": "^6.6.1",
+    "ts-jest": "^29.1.1",
     "winston": "^3.10.0"
   },
   "devDependencies": {

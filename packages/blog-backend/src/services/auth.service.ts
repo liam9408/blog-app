@@ -11,7 +11,11 @@ import UserModel from '../db/models/user.model';
 import HttpException from '../exceptions/HttpException';
 import logger from '../utils/logger';
 import { User } from '../types/user.type';
-import { RegistrationData, TokenData } from '../types/auth.type';
+import {
+  RegistrationData,
+  TokenData,
+  DataStoredInToken,
+} from '../types/auth.type';
 
 @injectable()
 class AuthService {
@@ -25,10 +29,12 @@ class AuthService {
     this.serverConfig = serverConfig;
   }
 
-  private async createToken(userId: number): Promise<TokenData> {
+  public async createToken(
+    dataStoredInToken: DataStoredInToken
+  ): Promise<TokenData> {
     const { jwtSecret } = this.serverConfig;
     const expiresIn: number = 60 * 60 * 24;
-    const token = jwt.sign({ userId }, jwtSecret, { expiresIn });
+    const token = jwt.sign(dataStoredInToken, jwtSecret, { expiresIn });
 
     if (!token) {
       logger.error({
@@ -57,7 +63,9 @@ class AuthService {
         }
       );
 
-      const tokenData = await this.createToken(newUser.id);
+      const dataStoredInToken = { userId: newUser.id };
+
+      const tokenData = await this.createToken(dataStoredInToken);
       const cookie = AuthService.createCookie(tokenData);
 
       const user = omit(newUser.toJSON(), 'password');
@@ -103,7 +111,9 @@ class AuthService {
         throw new HttpException(409, 30001, 'Invalid credentials.');
       }
 
-      const tokenData = await this.createToken(existingUser.id);
+      const dataStoredInToken = { userId: existingUser.id };
+
+      const tokenData = await this.createToken(dataStoredInToken);
       const cookie = AuthService.createCookie(tokenData);
 
       const user = omit(existingUser.toJSON(), 'password');
@@ -133,7 +143,9 @@ class AuthService {
         throw new HttpException(500, 30001, 'No user found');
       }
 
-      const tokenData = await this.createToken(userId);
+      const dataStoredInToken = { userId };
+
+      const tokenData = await this.createToken(dataStoredInToken);
       const cookie = AuthService.createCookie(tokenData);
 
       const user = omit(existingUser.toJSON(), 'password');
