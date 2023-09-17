@@ -1,26 +1,19 @@
 import { useEffect, useState, useCallback, MouseEvent } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  TablePagination,
-} from '@mui/material';
+import { Box, Container, Typography, TablePagination } from '@mui/material';
 
 import { AuthGuard } from 'src/components/organisms/AuthGuard';
 import { DashboardLayout } from 'src/layout/dashboard/vertical-layout';
-import { PostListLayout } from 'src/layout/post-list';
 import { postApi } from 'src/api/posts-api';
 import { useMounted } from 'src/hooks/use-mounted';
 import {
   BlogPostCard,
   BlogPostCardSkeleton,
 } from 'src/components/organisms/BlogPostCard';
+import { ToggleActivities } from 'src/components/molecules/ToggleActivities';
 
 const Activities: NextPage = () => {
   const isMounted = useMounted();
@@ -95,23 +88,7 @@ const Activities: NextPage = () => {
             pb: '60px',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              mb: 6,
-            }}
-          >
-            <Typography variant="h5">Activities</Typography>
-            <NextLink href="/post/new" passHref>
-              <Button component="a" variant="contained">
-                New Post
-              </Button>
-            </NextLink>
-          </Box>
-
+          <ToggleActivities />
           {loading && (
             <>
               <BlogPostCardSkeleton />
@@ -136,6 +113,20 @@ const Activities: NextPage = () => {
                 />
               );
             })}
+          {posts.length === 0 && (
+            <Box
+              sx={{
+                py: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'neutral.400',
+                fontWeight: 300,
+              }}
+            >
+              <Typography variant="h6">There are no posts</Typography>
+            </Box>
+          )}
           <TablePagination
             component="div"
             count={postsCount}

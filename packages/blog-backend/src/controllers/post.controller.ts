@@ -30,8 +30,13 @@ class PostController {
     this.categoryService = categoryService;
   }
 
-  public getPosts = async (req: Request, res: Response, next: NextFunction) => {
+  public getPosts = async (
+    req: RequestWithIdentity,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
+      const { userId } = req;
       const { offset, limit, ...searchValues } = req.query;
       let sort: any = 'desc';
       let sortBy: any = 'createdAt';
@@ -40,7 +45,7 @@ class PostController {
         sortBy = req.query.sortBy ? req.query.sortBy : sortBy;
       }
 
-      const searchParams: WhereOptions = {};
+      const searchParams: WhereOptions = { status: POSTS.status.PUBLISHED };
 
       for (const [searchByKey, searchByValue] of Object.entries(searchValues)) {
         switch (searchByKey) {
@@ -58,20 +63,22 @@ class PostController {
             searchParams.status = {
               [Op.in]: String(searchByValue).split(','),
             };
-            searchParams.actionNeeded = false;
             break;
           case 'category':
-            console.log(searchByValue);
             const category = await this.categoryService.getCategoryByName(
               String(searchByValue)
             );
             searchParams.categoryId = category.id;
             break;
+          case 'user':
+            delete searchParams.status;
+            searchParams.userId = userId;
+            break;
         }
       }
 
       const query = {
-        where: { ...searchParams, status: POSTS.status.PUBLISHED },
+        where: { ...searchParams },
         ...getPagination(limit, offset),
         ...getOrderOptions([{ sortKey: sortBy, sortOrder: sort }]),
       };
@@ -139,6 +146,11 @@ class PostController {
         userId,
         ...body,
       };
+
+      if (dataToUpdate.status === POSTS.status.PUBLISHED) {
+        dataToUpdate.publishedAt = new Date();
+      }
+
       const resp = await this.postService.createPost(dataToUpdate);
       if (resp) {
         res.status(200).json({ success: true, data: resp });
@@ -161,7 +173,10 @@ class PostController {
         ...body,
       };
 
-      console.log(dataToUpdate);
+      if (dataToUpdate.status === POSTS.status.PUBLISHED) {
+        dataToUpdate.publishedAt = new Date();
+      }
+
       const resp = await this.postService.editPost(dataToUpdate, [
         Number(postId),
       ]);
