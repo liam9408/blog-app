@@ -7,7 +7,7 @@ import iocContainer from '../configs/ioc.config';
 import logger from '../utils/logger';
 import ServerConfig from '../configs/server.config';
 
-import { UnsplashProvider } from '..//services';
+import { UnsplashProvider } from '../services';
 
 @injectable()
 class ImagesController {
@@ -21,10 +21,7 @@ class ImagesController {
     next: NextFunction
   ) => {
     try {
-      const query = req.query.query;
-      const resp = await this.unsplashProvider.getImages(
-        query && String(query)
-      );
+      const resp = await this.unsplashProvider.getImages();
       const parsedImages = resp.map((imageObj) => ({
         thumbnail: imageObj.urls.small,
         image: imageObj.urls.small,

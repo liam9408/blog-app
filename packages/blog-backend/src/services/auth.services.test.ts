@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import * as jwt from 'jsonwebtoken';
+import { RegistrationData } from 'auth.type';
 import { SERVICE_IDENTIFIER } from '../constants';
 import AuthService from './auth.service';
 import iocTestContainer from '../tests/configs/jest.ioc.config';
 import { User } from '../types/user.type';
 import UserModel from '../db/models/user.model';
-import { RegistrationData } from 'auth.type';
 
 const token = 'token';
 const expiresIn = 86400;
@@ -58,9 +58,9 @@ describe('Unit Test: Auth Service', () => {
       jest.spyOn(jwt, 'sign').mockImplementation(() => {
         return undefined;
       });
-      expect(() =>
-        authService.createToken(mockedDataStoredInToken)
-      ).toThrowError(expect.any(Error));
+      expect(() => authService.createToken(mockedDataStoredInToken)).toThrow(
+        expect.any(Error)
+      );
     });
   });
 

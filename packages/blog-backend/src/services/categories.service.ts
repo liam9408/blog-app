@@ -1,10 +1,10 @@
 import { injectable } from 'inversify';
 import { FindOptions } from 'sequelize';
 
+import { Category } from 'category.type';
 import CategoryModel from '../db/models/category.model';
 import HttpException from '../exceptions/HttpException';
 import logger from '../utils/logger';
-import { Category } from 'category.type';
 
 @injectable()
 class CategoryService {

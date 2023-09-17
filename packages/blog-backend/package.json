@@ -37,6 +37,7 @@
     "@types/jest": "^29.5.5",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/morgan": "^1.9.5",
+    "@types/node": "^20.6.2",
     "@types/sequelize": "^4.28.15",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
@@ -74,6 +75,7 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.14"
+    "@types/cors": "^2.8.14",
+    "@types/reflect-metadata": "^0.1.0"
   }
 }

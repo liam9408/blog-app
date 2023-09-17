@@ -3,13 +3,13 @@ import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import _ from 'lodash';
 
+import { RequestWithIdentity } from 'request.type';
 import { SERVICE_IDENTIFIER } from '../constants';
 import iocContainer from '../configs/ioc.config';
 
 import { AuthService } from '../services';
 import logger from '../utils/logger';
 import { RegistrationData } from '../types/auth.type';
-import { RequestWithIdentity } from 'request.type';
 
 @injectable()
 class AuthController {

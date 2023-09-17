@@ -1,17 +1,17 @@
 import { injectable } from 'inversify';
 import { NextFunction, Request, Response } from 'express';
 import { WhereOptions, Op } from 'sequelize';
+import { RequestWithIdentity } from 'request.type';
 import { SERVICE_IDENTIFIER } from '../constants';
 import iocContainer from '../configs/ioc.config';
 
 import { PostService, CategoryService } from '../services';
 import logger from '../utils/logger';
-import { RequestWithIdentity } from 'request.type';
 import { getPagination, getOrderOptions } from '../utils/sequelize';
 import { calculateReadingTime } from '../utils/calculateReadingTime';
 import enums from '../enums';
 
-const POSTS = enums.POSTS;
+const { POSTS } = enums;
 
 @injectable()
 class PostController {
@@ -142,7 +142,7 @@ class PostController {
     next: NextFunction
   ) => {
     try {
-      const body = req.body;
+      const { body } = req;
       const { userId } = req;
       const dataToUpdate = {
         userId,
@@ -170,7 +170,7 @@ class PostController {
 
   public editPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const body = req.body;
+      const { body } = req;
       const { postId } = req.params;
       const dataToUpdate = {
         ...body,

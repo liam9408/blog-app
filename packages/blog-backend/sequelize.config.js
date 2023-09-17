@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-let dialectOptions = {};
+const dialectOptions = {};
 
 let config = {
   local: {

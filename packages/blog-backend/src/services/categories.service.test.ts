@@ -2,7 +2,7 @@ import iocTestContainer, {
   setupSequelize,
 } from '../tests/configs/jest.ioc.config';
 import { SERVICE_IDENTIFIER } from '../constants';
-import CategoryService from '../services/categories.service';
+import CategoryService from './categories.service';
 
 import CategoryModel from '../db/models/category.model';
 
@@ -38,7 +38,7 @@ describe('Unit Test: Category Service', () => {
         .mockResolvedValueOnce(categoryModelInstanceMock);
 
       const resp = await categoryService.findAll();
-      expect(categoryService.categoryModel.findAll).toBeCalledTimes(1);
+      expect(categoryService.categoryModel.findAll).toHaveBeenCalledTimes(1);
       expect(resp.length).toBeGreaterThanOrEqual(0);
     });
 
@@ -66,7 +66,7 @@ describe('Unit Test: Category Service', () => {
         .mockResolvedValueOnce(categoryModelInstanceMock);
 
       const resp = await categoryService.getCategoryByName(category.name);
-      expect(categoryService.categoryModel.findOne).toBeCalled();
+      expect(categoryService.categoryModel.findOne).toHaveBeenCalled();
       expect(resp).not.toBeNull();
       expect(resp).toHaveProperty('id');
     });
@@ -95,7 +95,7 @@ describe('Unit Test: Category Service', () => {
         .mockResolvedValueOnce(categoryModelInstanceMock);
 
       const resp = await categoryService.findById(category.id);
-      expect(categoryService.categoryModel.findOne).toBeCalled();
+      expect(categoryService.categoryModel.findOne).toHaveBeenCalled();
       expect(resp).not.toBeNull();
       expect(resp).toHaveProperty('id');
     });

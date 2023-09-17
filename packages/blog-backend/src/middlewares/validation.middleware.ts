@@ -11,7 +11,7 @@ function validationMiddleware(
   whitelist = true
 ): RequestHandler {
   return (req, res, next) => {
-    let body = req.body;
+    let { body } = req;
     if (req.method === 'GET') {
       body = req.query;
     }

@@ -177,7 +177,7 @@ const Me: NextPage = () => {
               <CircularProgress size={40} />
             </Box>
           )}
-          {isEnd && (
+          {!fetchingMore && isEnd && (
             <Box
               sx={{
                 py: 10,
