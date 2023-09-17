@@ -53,6 +53,17 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
     setOpenImagePicker(false);
   };
 
+  const deletePost = async () => {
+    try {
+      const resp = await postApi.deletePost(post.id);
+      if (resp.success) {
+        router.push('/activities/me');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const getCategories = useCallback(async () => {
     try {
       const resp = await categoriesApi.getCategories();
@@ -330,6 +341,18 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
                 mt: 3,
               }}
             />
+          </CardContent>
+        </Card>
+        <Card sx={{ mt: 4 }}>
+          <CardContent>
+            <Button
+              sx={{ mr: 2, color: 'error' }}
+              component="a"
+              variant="text"
+              onClick={deletePost}
+            >
+              Delete Post
+            </Button>
           </CardContent>
         </Card>
       </form>

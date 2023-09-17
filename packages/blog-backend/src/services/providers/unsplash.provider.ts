@@ -28,7 +28,7 @@ class UnsplashProvider {
 
   public async getImages(): Promise<any[]> {
     try {
-      const response = await axios.get(`${this.apiUrl}/photos`, {
+      const response = await axios.get(`${this.apiUrl}/photos?per_page=20`, {
         headers: {
           Authorization: `Client-ID ${this.unsplashAccessKey}`,
         },

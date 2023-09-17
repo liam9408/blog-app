@@ -62,6 +62,18 @@ class PostsApi {
       }
     });
   }
+
+  async deletePost(postId: number): Promise<{ success: boolean }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const resp = apiService.delete(`/posts/${postId}`, {});
+        resolve(resp);
+      } catch (err) {
+        console.error('[Posts Api]: ', err);
+        reject(new Error('Internal server error'));
+      }
+    });
+  }
 }
 
 export const postApi = new PostsApi();

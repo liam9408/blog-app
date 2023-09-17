@@ -11,7 +11,7 @@
     "pre-build": "npm run lint & npm run clean",
     "post-build": "npm run copy-asset",
     "build": "npm run pre-build && npm run build-ts",
-    "build-docker": "npm run build && docker-compose build",
+    "build-docker": "docker-compose build",
     "build-ts": "tsc",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "test": "jest --forceExit --coverage --verbose --detectOpenHandles",

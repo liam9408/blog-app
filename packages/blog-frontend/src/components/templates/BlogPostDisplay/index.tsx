@@ -60,12 +60,7 @@ export const BlogPostDisplay: FC<BlogPostDisplayProps> = (props) => {
           {post.title}
         </Typography>
         {isAuthor && (
-          <Button
-            sx={{ ml: 2 }}
-            component="a"
-            variant="contained"
-            onClick={onToggleEdit}
-          >
+          <Button component="a" variant="contained" onClick={onToggleEdit}>
             Edit
           </Button>
         )}

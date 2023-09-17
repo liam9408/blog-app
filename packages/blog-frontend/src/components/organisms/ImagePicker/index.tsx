@@ -40,7 +40,7 @@ interface ImageRowProps {
 const ImageRow: FC<ImageRowProps> = (props) => {
   const { image, handleImageClick } = props;
   return (
-    <ImageListItem>
+    <ImageListItem sx={{ cursor: 'pointer' }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         onClick={() => handleImageClick(image.image)}
