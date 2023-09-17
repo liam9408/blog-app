@@ -16,6 +16,7 @@ import {
   UserBlogPostCard,
   UserBlogPostCardSkeleton,
 } from 'src/components/organisms/UserBlogPostCard';
+import { toast } from 'react-hot-toast';
 
 const Me: NextPage = () => {
   const isMounted = useMounted();
@@ -44,6 +45,7 @@ const Me: NextPage = () => {
         setLoading(false);
       }
     } catch (err) {
+      toast.error(err.params);
       console.error(err);
       setLoading(false);
     }
@@ -76,6 +78,7 @@ const Me: NextPage = () => {
           }
         }, 2000);
       } catch (err) {
+        toast.error(err.params);
         console.error(err);
         setFetchingMore(false);
       }
@@ -119,7 +122,6 @@ const Me: NextPage = () => {
         <Container
           maxWidth="md"
           sx={{
-            pt: '20px',
             pb: '60px',
           }}
         >

@@ -14,6 +14,8 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { TransitionProps } from '@mui/material/transitions';
 import { CircularProgress } from '@mui/material';
+import toast from 'react-hot-toast';
+
 import { Image } from 'src/types/image.type';
 import { imagesApi } from 'src/api/image-api';
 
@@ -67,6 +69,7 @@ export const ImagePicker: FC<ImagePickerProps> = (props) => {
         setLoadingImages(false);
       }
     } catch (err) {
+      toast.error(err.params);
       console.error(err);
     }
   };

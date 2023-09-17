@@ -17,6 +17,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { toast } from 'react-hot-toast';
 
 import { QuillEditor } from 'src/components/organisms/QuillEditor';
 import { Post } from 'src/types/posts.type';
@@ -60,6 +61,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
         router.push('/activities/me');
       }
     } catch (err) {
+      toast.error(err.params);
       console.error(err);
     }
   };
@@ -76,6 +78,7 @@ export const BlogPostEdit: FC<BlogPostEditProps> = (props) => {
         );
       }
     } catch (err) {
+      toast.error(err.params);
       console.error(err);
     }
   }, [isMounted]);

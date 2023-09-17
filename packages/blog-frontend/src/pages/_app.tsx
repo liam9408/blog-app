@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import Router from 'next/router';
-// import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import nProgress from 'nprogress';
 import { CacheProvider } from '@emotion/react';
 import type { EmotionCache } from '@emotion/cache';
@@ -54,7 +54,7 @@ const App: FC<EnhancedAppProps> = (props) => {
                 })}
               >
                 <CssBaseline />
-                {/* <Toaster position="top-center" /> */}
+                <Toaster position="top-center" />
                 <AuthConsumer>
                   {(auth) =>
                     !auth.isInitialized ? (

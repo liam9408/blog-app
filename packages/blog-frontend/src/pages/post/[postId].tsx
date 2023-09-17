@@ -12,6 +12,7 @@ import { Post } from 'src/types/posts.type';
 import { useAuth } from 'src/hooks/use-auth';
 import { BlogPostDisplay } from 'src/components/templates/BlogPostDisplay';
 import { BlogPostEdit } from 'src/components/templates/BlogPostEdit';
+import { toast } from 'react-hot-toast';
 
 const PostDetails: NextPage = () => {
   const isMounted = useMounted();
@@ -33,7 +34,7 @@ const PostDetails: NextPage = () => {
           setLoading(false);
         }
       } catch (err) {
-        console.log(err);
+        toast.error(err.params);
         console.error(err);
         setLoading(false);
       }

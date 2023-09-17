@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback, MouseEvent } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
 
 import { Box, Container, Typography, TablePagination } from '@mui/material';
 
@@ -46,6 +47,7 @@ const Activities: NextPage = () => {
           }
         }, 1000);
       } catch (err) {
+        toast.error(err.params);
         console.error(err);
         setLoading(false);
       }
@@ -85,7 +87,7 @@ const Activities: NextPage = () => {
         <Container
           maxWidth="md"
           sx={{
-            pt: '20px',
+            // pt: '10px',
             pb: '60px',
           }}
         >

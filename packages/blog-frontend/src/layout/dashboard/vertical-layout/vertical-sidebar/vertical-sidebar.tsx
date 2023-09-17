@@ -4,6 +4,7 @@ import type { FC } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Divider } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { toast } from 'react-hot-toast';
 import { Scrollbar } from '../../../../components/molecules/ScrollBar';
 import { DashboardSidebarItem } from './vertical-sidebar-item';
 import { useHover } from '../../../..//hooks/use-hover';
@@ -41,6 +42,7 @@ export const VerticalSidebarComponent: FC<VerticalSidebarComponentProps> = (
         setLoading(false);
       }
     } catch (err) {
+      toast.error(err.params);
       console.error(err);
     }
   }, [isMounted]);

@@ -77,14 +77,14 @@ export const UserBlogPostCard: FC<UserBlogPostCardProps> = (props) => {
       }}
       {...other}
     >
-      <CardContent sx={{ py: 3 }}>
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="flex-start"
-        >
-          <NextLink href={`/posts/${id}`} target="_blank" passHref>
+      <CardContent sx={{ py: 3, cursor: 'pointer' }}>
+        <NextLink href={`/post/${id}`} target="_blank" passHref>
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="flex-start"
+          >
             <Link
               color="textPrimary"
               component="a"
@@ -97,84 +97,84 @@ export const UserBlogPostCard: FC<UserBlogPostCardProps> = (props) => {
                 sx={{ width: 100, height: 130, mr: 2, borderRadius: '5px' }}
               />
             </Link>
-          </NextLink>
-          <Box
-            height="auto"
-            display="flex"
-            flexDirection="column"
-            alignItems="flex-start"
-            justifyContent="flex-start"
-          >
-            <Box sx={{ mb: 2 }}>
-              <Chip
-                size="small"
-                label={
-                  <Typography
-                    color="textSecondary"
-                    sx={{
-                      fontSize: '11px',
-                    }}
-                  >
-                    {category}
-                  </Typography>
-                }
-              />
-            </Box>
-            <NextLink href={`/post/${id}`} target="_blank" passHref>
-              <Link
-                color="textPrimary"
-                component="a"
-                target="_blank"
-                variant="h6"
-              >
-                {title}
-              </Link>
-            </NextLink>
-            <Typography
-              color="textSecondary"
-              sx={{
-                height: 'auto',
-                mt: 1,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 2,
-              }}
-              variant="body2"
-            >
-              {shortDescription}
-            </Typography>
             <Box
               height="auto"
               display="flex"
-              flexDirection="row"
+              flexDirection="column"
               alignItems="flex-start"
               justifyContent="flex-start"
-              mt="10px"
             >
+              <Box sx={{ mb: 2 }}>
+                <Chip
+                  size="small"
+                  label={
+                    <Typography
+                      color="textSecondary"
+                      sx={{
+                        fontSize: '11px',
+                      }}
+                    >
+                      {category}
+                    </Typography>
+                  }
+                />
+              </Box>
+              <NextLink href={`/post/${id}`} target="_blank" passHref>
+                <Link
+                  color="textPrimary"
+                  component="a"
+                  target="_blank"
+                  variant="h6"
+                >
+                  {title}
+                </Link>
+              </NextLink>
               <Typography
-                variant="body2"
                 color="textSecondary"
-                sx={{ fontSize: '12px' }}
-              >
-                Created On: {format(createdAt, 'MMM d, yyyy')}
-              </Typography>
-              <Typography
+                sx={{
+                  height: 'auto',
+                  mt: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 2,
+                }}
                 variant="body2"
-                color="textSecondary"
-                sx={{ fontSize: '12px', ml: 1 }}
               >
-                •{' '}
-                {publishedAt
-                  ? `Published On: ${format(
-                      new Date(publishedAt).getTime(),
-                      'MMMM d, yyyy'
-                    )}`
-                  : status.toUpperCase()}{' '}
+                {shortDescription}
               </Typography>
+              <Box
+                height="auto"
+                display="flex"
+                flexDirection="row"
+                alignItems="flex-start"
+                justifyContent="flex-start"
+                mt="10px"
+              >
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{ fontSize: '12px' }}
+                >
+                  Created On: {format(createdAt, 'MMM d, yyyy')}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{ fontSize: '12px', ml: 1 }}
+                >
+                  •{' '}
+                  {publishedAt
+                    ? `Published On: ${format(
+                        new Date(publishedAt).getTime(),
+                        'MMMM d, yyyy'
+                      )}`
+                    : status.toUpperCase()}{' '}
+                </Typography>
+              </Box>
             </Box>
           </Box>
-        </Box>
+        </NextLink>
       </CardContent>
     </Card>
   );
