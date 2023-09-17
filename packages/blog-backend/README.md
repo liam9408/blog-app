@@ -45,7 +45,7 @@ $ sequelize db:seed:all  # Applying seed data
 
 Make sure you have completed the environment setup.
 
-Currently there is a error from reflect-metadata during `npm build` but the application can be ran nonetheless.
+Currently there is a compile error from reflect-metadata during `npm build` and `npm build-docker` but the application can be ran nonetheless.
 
 ```sh
 $ npm install
@@ -53,7 +53,7 @@ $ npm build
 $ npm run watch
 ```
 
-Start app using Docker
+or, start app using Docker
 
 ```sh
 $ npm run build-docker
