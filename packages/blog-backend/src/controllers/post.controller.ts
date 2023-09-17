@@ -8,6 +8,7 @@ import { PostService, CategoryService } from '../services';
 import logger from '../utils/logger';
 import { RequestWithIdentity } from 'request.type';
 import { getPagination, getOrderOptions } from '../utils/sequelize';
+import { calculateReadingTime } from '../utils/calculateReadingTime';
 import enums from '../enums';
 
 const POSTS = enums.POSTS;
@@ -84,6 +85,7 @@ class PostController {
       };
 
       const resp = await this.postService.findAndCountAll(query);
+
       if (resp) {
         res.status(200).json({ success: true, data: resp });
       }
@@ -145,6 +147,7 @@ class PostController {
       const dataToUpdate = {
         userId,
         ...body,
+        readTimeMinutes: calculateReadingTime(body.content),
       };
 
       if (dataToUpdate.status === POSTS.status.PUBLISHED) {
@@ -171,6 +174,7 @@ class PostController {
       const { postId } = req.params;
       const dataToUpdate = {
         ...body,
+        readTimeMinutes: calculateReadingTime(body.content),
       };
 
       if (dataToUpdate.status === POSTS.status.PUBLISHED) {

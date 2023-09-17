@@ -9,10 +9,12 @@ export interface Post {
   content?: string;
   cover?: string;
   categoryId?: number;
+  readTime?: number;
   status?: 'draft' | 'published';
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
   user?: User;
   category?: Category;
+  readTimeMinutes?: number;
 }

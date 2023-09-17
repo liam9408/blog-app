@@ -18,11 +18,13 @@ class Post extends Model {
 
   public content: string;
 
-  public cover: string;
-
   public categoryId: number;
 
   public publishedAt: Date;
+
+  public cover: string;
+
+  public readTimeMinutes: number;
 
   public readonly createdAt!: Date;
 
@@ -52,9 +54,6 @@ class Post extends Model {
         content: {
           type: new DataTypes.TEXT(),
         },
-        cover: {
-          type: new DataTypes.STRING(255),
-        },
         status: {
           type: DataTypes.ENUM,
           values: getValues(status),
@@ -69,6 +68,12 @@ class Post extends Model {
         },
         publishedAt: {
           type: DataTypes.DATE,
+        },
+        cover: {
+          type: new DataTypes.STRING(255),
+        },
+        readTimeMinutes: {
+          type: DataTypes.INTEGER,
         },
       },
       {

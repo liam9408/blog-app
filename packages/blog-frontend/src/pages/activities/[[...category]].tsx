@@ -108,7 +108,7 @@ const Activities: NextPage = () => {
                   category={post.category.name}
                   cover={post.cover}
                   publishedAt={new Date(post.createdAt).getTime()}
-                  readTime={'3 min'}
+                  readTime={post.readTimeMinutes}
                   shortDescription={post.description}
                   title={post.title}
                 />

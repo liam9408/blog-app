@@ -15,4 +15,5 @@ export interface Post {
   updatedAt: Date;
   user: User;
   category: Category;
+  readTimeMinutes?: number;
 }

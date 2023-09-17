@@ -147,7 +147,7 @@ export const BlogPostCard: FC<BlogPostCardProps> = (props) => {
             sx={{ flexGrow: 1 }}
             variant="body2"
           >
-            {`${readTime} read`}
+            {`${readTime} min read`}
           </Typography>
         </Box>
       </CardContent>
